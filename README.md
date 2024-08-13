@@ -29,7 +29,7 @@ export default tseslint.config({
 - Optionally add `...tseslint.configs.stylisticTypeChecked`
 - Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
 
-```js
+````js
 // eslint.config.js
 import react from 'eslint-plugin-react';
 
@@ -47,4 +47,42 @@ export default tseslint.config({
     ...react.configs['jsx-runtime'].rules,
   },
 });
+## Project Setup
+Clone github repository:
+```sh
+git clone https://github.com/epriosf/flat-finder-app.git
+````
+
+Change to the repository name:
+
+```sh
+cd flat-finder-app
+```
+
+Install dependencies
+
+```sh
+npm install
+```
+
+### Compile and Hot-Reload for Development
+
+```sh
+npm run dev
+```
+
+### Type-Check, Compile and Minify for Production
+
+```sh
+npm run build
+```
+
+### Lint with [ESLint](https://eslint.org/)
+
+```sh
+npm run lint
+```
+
+```
+
 ```
