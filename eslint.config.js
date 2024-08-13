@@ -1,16 +1,21 @@
 import pluginJs from '@eslint/js';
+import tseslint from '@typescript-eslint/eslint-plugin';
+import tsParser from '@typescript-eslint/parser';
 import prettier from 'eslint-config-prettier';
 import pluginPrettier from 'eslint-plugin-prettier';
 import pluginReact from 'eslint-plugin-react';
 import globals from 'globals';
-import tseslint from 'typescript-eslint';
 
 export default [
   {
     files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'],
     languageOptions: {
       globals: globals.browser,
-      parser: '@typescript-eslint/parser',
+      parser: tsParser,
+      parserOptions: {
+        ecmaVersion: 2020,
+        sourceType: 'module',
+      },
     },
     settings: {
       react: {
@@ -20,13 +25,13 @@ export default [
     plugins: {
       react: pluginReact,
       prettier: pluginPrettier,
+      '@typescript-eslint': tseslint,
     },
     rules: {
       'prettier/prettier': 'error',
-      // Add other rules as needed
+      ...pluginJs.configs.recommended.rules,
+      ...tseslint.configs['recommended'].rules,
+      ...prettier.rules,
     },
   },
-  pluginJs.configs.recommended,
-  ...tseslint.configs.recommended,
-  prettier,
 ];
