@@ -10,7 +10,8 @@
     "lint:fix": "eslint --fix .",
     "format": "prettier --write .",
     "preview": "vite preview",
-    "prepare": "husky install"
+    "prepare": "husky install",
+     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "react": "^18.3.1",
