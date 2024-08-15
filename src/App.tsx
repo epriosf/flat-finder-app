@@ -1,5 +1,11 @@
+import { LoginForm } from './components/Users/LoginForm';
+
 function App() {
-  return <>Flat Finder App</>;
+  return (
+    <>
+      <LoginForm />;
+    </>
+  );
 }
 
 export default App;
