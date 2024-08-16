@@ -1,9 +1,24 @@
-import { LoginForm } from './components/Users/LoginForm';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import ErrorPage from './pages/ErrorPage';
+import HomePage from './pages/HomePage';
+import { LoginPage } from './pages/LoginPage';
+import RootLayout from './pages/RootPage';
 
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <RootLayout />,
+    errorElement: <ErrorPage />,
+    children: [
+      { path: '', element: <HomePage /> },
+      { path: 'login', element: <LoginPage /> },
+    ],
+  },
+]);
 function App() {
   return (
     <>
-      <LoginForm />;
+      <RouterProvider router={router} />
     </>
   );
 }

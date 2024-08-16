@@ -1,24 +1,7 @@
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../config/firebase';
 
-//Method to register new User
-export const registerUser = async (email: string, password: string) => {
-  try {
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password,
-    );
-    console.log('User registered:', userCredential.user);
-  } catch (error) {
-    console.error('Error registering user:', error);
-  }
-};
-
-//Method to login a user
+//Method to login a User
 export const loginUser = async (email: string, password: string) => {
   try {
     const userCredential = await signInWithEmailAndPassword(
@@ -27,7 +10,9 @@ export const loginUser = async (email: string, password: string) => {
       password,
     );
     console.log('User logged in:', userCredential.user);
+    return userCredential.user;
   } catch (error) {
     console.error('Error logging in:', error);
+    throw error;
   }
 };

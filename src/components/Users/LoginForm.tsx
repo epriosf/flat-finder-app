@@ -1,13 +1,16 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../services/firebase';
 
 export const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
       const user = await loginUser(email, password);
+      navigate('/');
       console.log('Logged in user:', user);
     } catch (error) {
       console.error('Error logging in user:', error);
