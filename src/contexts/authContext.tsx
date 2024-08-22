@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  ReactNode,
-  useState,
-  // useContext,
-  useEffect,
-} from 'react';
+import React, { createContext, ReactNode, useState, useEffect } from 'react';
 import { User } from 'firebase/auth';
 import {
   initializeAuthPersistence,
@@ -15,7 +9,7 @@ import {
 
 export interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
 }
 
@@ -40,11 +34,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     return () => unsubscribe();
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<User> => {
     try {
-      await loginUser(email, password);
+      const user = await loginUser(email, password);
+      if (!user) {
+        throw new Error('Login failed: User not found.');
+      }
+      return user;
     } catch (error) {
       console.error('Error logging in:', error);
+      throw new Error('Login failed');
     }
   };
 

@@ -3,6 +3,7 @@ import ErrorPage from './pages/ErrorPage';
 import HomePage from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
 import RootLayout from './pages/RootPage';
+import './custompanel.css';
 
 const router = createBrowserRouter([
   {

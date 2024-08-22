@@ -79,3 +79,7 @@
 .pi {
   z-index: 100;
 }
+
+#loginForm .p-inline-message.p-inline-message-error .p-inline-message-icon {
+  color: var(--pink-300);
+}
