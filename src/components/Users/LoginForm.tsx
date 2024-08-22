@@ -9,7 +9,7 @@ import { useAuth } from '../../hooks/useAuth';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { Message } from 'primereact/message';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const SignupSchema = Yup.object({
   email: Yup.string().email('Invalid email').required('Email Required'),
