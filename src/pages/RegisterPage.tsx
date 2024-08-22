@@ -10,7 +10,11 @@ import { useState } from 'react';
 import { styled } from 'styled-components';
 import * as Yup from 'yup';
 import FloatingInput from '../components/Commons/FloatingInput';
-import { createUser, uploadProfileImage } from '../services/firebase';
+import {
+  registerUserWithAuth,
+  registerUserWithFirestore,
+  uploadProfileImage,
+} from '../services/firebase';
 
 const StyledFormContainer = styled.div`
   display: flex;
@@ -78,7 +82,18 @@ const RegisterPage = () => {
         password: values.password,
         profile: profileUrl ? profileUrl : '',
       };
-      await createUser(user);
+      const userCredential = await registerUserWithAuth(
+        user.email,
+        user.password,
+      );
+      await registerUserWithFirestore(userCredential.uid, {
+        firstname: user.firstname,
+        lastname: user.lastname,
+        email: user.email,
+        password: user.password,
+        birthday: user.birthday,
+        profile: user.profile,
+      });
     },
   });
 
@@ -196,7 +211,6 @@ const RegisterPage = () => {
                 className="w-full"
                 inputStyle={{ borderLeft: 'none' }}
                 onBlur={formik.handleBlur}
-                toggleMask
               />
             </div>
             <label htmlFor="password" className="floating-label pl-5 w-full">
