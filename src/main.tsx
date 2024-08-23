@@ -1,16 +1,18 @@
 import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css'; // Icons
 import 'primereact/resources/primereact.min.css'; // Core Styles
-//import 'primereact/resources/themes/md-dark-indigo/theme.css'; //Theme
-import 'primereact/resources/themes/md-light-indigo/theme.css';
+import 'primereact/resources/themes/md-light-indigo/theme.css'; //Theme
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import GlobalStyles from './components/Commons/GlobalStyles.tsx';
+import { AuthProvider } from './contexts/authContext.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <GlobalStyles />
-    <App />
+    <AuthProvider>
+      <App />
+    </AuthProvider>
   </StrictMode>,
 );
