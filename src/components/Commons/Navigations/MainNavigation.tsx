@@ -4,10 +4,13 @@ const MainNavigation = () => {
   return (
     <>
       <li>
-        <NavLink to="/">Home</NavLink>
+        <NavLink to="/home">Home</NavLink>
       </li>
       <li>
-        <NavLink to="/login">Login</NavLink>
+        <NavLink to="/home/myFlats">myFlats</NavLink>
+      </li>
+      <li>
+        <NavLink to="/home/addUser">AddUsers</NavLink>
       </li>
     </>
   );

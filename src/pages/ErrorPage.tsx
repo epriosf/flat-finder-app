@@ -1,4 +1,4 @@
-import MainNavigation from '../components/Commons/MainNavigation';
+import MainNavigation from '../components/Commons/Navigations/MainNavigation';
 
 const ErrorPage = () => {
   return (
