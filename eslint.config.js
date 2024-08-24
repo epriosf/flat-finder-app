@@ -10,11 +10,14 @@ export default [
   {
     files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'],
     languageOptions: {
-      globals: globals.browser,
       parser: tsParser,
       parserOptions: {
         ecmaVersion: 2020,
         sourceType: 'module',
+      },
+      globals: {
+        ...globals.browser,
+        React: 'readonly',
       },
     },
     settings: {

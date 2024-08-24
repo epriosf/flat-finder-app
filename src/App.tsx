@@ -1,5 +1,6 @@
 import { Suspense, lazy } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import './custompanel.css';
 import ErrorPage from './pages/ErrorPage';
 import RootLayout from './pages/RootPage';
 import './custompanel.css';

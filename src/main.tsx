@@ -1,5 +1,5 @@
-import 'primeicons/primeicons.css'; // Icons
 import 'primeflex/primeflex.css';
+import 'primeicons/primeicons.css'; // Icons
 import 'primereact/resources/primereact.min.css'; // Core Styles
 import 'primereact/resources/themes/md-light-indigo/theme.css'; //Theme
 import { StrictMode } from 'react';

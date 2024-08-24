@@ -1,8 +1,8 @@
-import { LoginForm } from '../components/Users/LoginForm';
-import { TabView, TabPanel } from 'primereact/tabview';
-import RegisterPage from './RegisterPage';
 import { Image } from 'primereact/image';
+import { TabPanel, TabView } from 'primereact/tabview';
+import { LoginForm } from '../components/Users/LoginForm';
 import LogoWhite from './../images/logo-white.svg';
+import RegisterPage from './RegisterPage';
 // import './TabViewDemo.css';
 
 const LoginPage = () => {
