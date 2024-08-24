@@ -56,7 +56,7 @@ const Navbar = ({ visible, setVisible }: NavbarProps) => {
                     ></Button> */}
                   </span>
                 </div>
-                <MainNavigation />
+                <MainNavigation setVisible={setVisible} />
               </div>
             </div>
           </div>

@@ -4,13 +4,23 @@ import { Avatar } from 'primereact/avatar';
 import { useAuth } from '../../hooks/useAuth';
 import { logoutUser } from '../../services/authService';
 
-const MainNavigation = () => {
+interface MainNavigationProps {
+  // visible: boolean;
+  setVisible: (visible: boolean) => void;
+}
+
+const MainNavigation = ({ setVisible }: MainNavigationProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logoutUser();
+    setVisible(false);
     navigate('/login');
+  };
+
+  const handleVisible = () => {
+    setVisible(false);
   };
 
   return (
@@ -20,7 +30,11 @@ const MainNavigation = () => {
           <li>
             <div className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
               <i className="pi pi-home mr-2"></i>
-              <NavLink to="/" className="font-medium no-underline text-700">
+              <NavLink
+                to="/"
+                className="font-medium no-underline text-700"
+                onClick={handleVisible}
+              >
                 Home
               </NavLink>
               <Ripple />
@@ -32,6 +46,7 @@ const MainNavigation = () => {
               <NavLink
                 to="/favorites"
                 className="font-medium no-underline text-700"
+                onClick={handleVisible}
               >
                 Favorites
               </NavLink>
@@ -44,6 +59,7 @@ const MainNavigation = () => {
               <NavLink
                 to="/my-flats"
                 className="font-medium no-underline text-700"
+                onClick={handleVisible}
               >
                 My Flats
               </NavLink>
@@ -56,6 +72,7 @@ const MainNavigation = () => {
               <NavLink
                 to="/new-flat"
                 className="font-medium no-underline text-700"
+                onClick={handleVisible}
               >
                 New Flat
               </NavLink>
@@ -69,6 +86,7 @@ const MainNavigation = () => {
                 <NavLink
                   to="/all-users"
                   className="font-medium no-underline text-700"
+                  onClick={handleVisible}
                 >
                   All Users
                 </NavLink>
@@ -80,7 +98,8 @@ const MainNavigation = () => {
             <button
               type="button"
               onClick={handleLogout}
-              className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full bg-white border-none font-medium text-700"
+              className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-200 transition-duration-150 transition-colors w-full surface-100 border-noround border-none font-medium text-700 text-base"
+              style={{ fontWeight: 700 }}
             >
               <i className="pi pi-sign-out mr-2"></i>
               {/* <span className="font-medium no-underline text-700"> */}
@@ -97,6 +116,7 @@ const MainNavigation = () => {
           to="/profile"
           v-ripple
           className="m-3 flex align-items-center cursor-pointer p-3 gap-2 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple no-underline"
+          onClick={handleVisible}
         >
           <Avatar image={user?.profileImage} shape="circle" />
           <span className="font-bold">

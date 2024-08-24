@@ -80,6 +80,7 @@
   z-index: 100;
 }
 
-#loginForm .p-inline-message.p-inline-message-error .p-inline-message-icon {
+#loginForm .p-inline-message.p-inline-message-error .p-inline-message-icon,
+#registerForm.p-inline-message.p-inline-message-error .p-inline-message-icon {
   color: var(--pink-300);
 }
