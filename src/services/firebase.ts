@@ -2,7 +2,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import { auth, db } from '../config/firebase';
+import { auth, db, storage } from '../config/firebase';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import {
   collection,
   DocumentData,
@@ -88,6 +89,20 @@ export const registerUserWithFirestore = async (userId: string, user: User) => {
     await setDoc(doc(db, collectionName, userId), user);
   } catch (error) {
     console.error('Error registering user in Firestore', error);
+    throw error;
+  }
+};
+
+export const uploadProfileImage = async (file: File) => {
+  try {
+    const storageRef = ref(storage, `profileImages/${file.name}`);
+    await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(storageRef);
+
+    console.log('Download URL:', downloadURL); // Add this line to debug
+    return downloadURL;
+  } catch (error) {
+    console.error('Error uploading file:', error);
     throw error;
   }
 };
