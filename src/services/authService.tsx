@@ -18,11 +18,13 @@ export const loginUser = async (
   email: string,
   password: string,
 ): Promise<User> => {
+  console.log(email, password);
   const userCredential = await signInWithEmailAndPassword(
     auth,
     email,
     password,
   );
+  console.log('User logged in:', userCredential);
   return userCredential.user;
 };
 

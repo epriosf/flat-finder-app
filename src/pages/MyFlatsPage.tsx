@@ -1,4 +1,5 @@
 const MyFlatsPage = () => {
-  return <>My Flats Page</>;
+  return <>MyFlats Page</>;
 };
+
 export default MyFlatsPage;
