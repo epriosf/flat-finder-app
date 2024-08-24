@@ -17,7 +17,7 @@ export interface UserLogin {
   email: string;
   password: string;
 }
-export const LoginForm = () => {
+const LoginForm = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [loginError, setLoginError] = useState<boolean>(false);
@@ -33,7 +33,7 @@ export const LoginForm = () => {
       try {
         const user = await login(formik.values.email, formik.values.password);
         if (user) {
-          navigate('/');
+          navigate('/home');
           console.log('Logged in user:', user);
           setLoginError(false);
         } else {
@@ -111,3 +111,4 @@ export const LoginForm = () => {
     </>
   );
 };
+export default LoginForm;
