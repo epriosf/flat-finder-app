@@ -1,14 +1,109 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { Ripple } from 'primereact/ripple';
+import { Avatar } from 'primereact/avatar';
+import { useAuth } from '../../hooks/useAuth';
+import { logoutUser } from '../../services/authService';
 
 const MainNavigation = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logoutUser();
+    navigate('/login');
+  };
+
   return (
     <>
-      <li>
-        <NavLink to="/">Home</NavLink>
-      </li>
-      <li>
-        <NavLink to="/login">Login</NavLink>
-      </li>
+      <div className="overflow-y-auto">
+        <ul className="list-none p-0 m-0 overflow-hidden">
+          <li>
+            <div className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
+              <i className="pi pi-home mr-2"></i>
+              <NavLink to="/" className="font-medium no-underline text-700">
+                Home
+              </NavLink>
+              <Ripple />
+            </div>
+          </li>
+          <li>
+            <div className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
+              <i className="pi pi-heart mr-2"></i>
+              <NavLink
+                to="/favorites"
+                className="font-medium no-underline text-700"
+              >
+                Favorites
+              </NavLink>
+              <Ripple />
+            </div>
+          </li>
+          <li>
+            <div className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
+              <i className="pi pi-face-smile mr-2"></i>
+              <NavLink
+                to="/my-flats"
+                className="font-medium no-underline text-700"
+              >
+                My Flats
+              </NavLink>
+              <Ripple />
+            </div>
+          </li>
+          <li>
+            <div className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
+              <i className="pi pi-plus mr-2"></i>
+              <NavLink
+                to="/new-flat"
+                className="font-medium no-underline text-700"
+              >
+                New Flat
+              </NavLink>
+              <Ripple />
+            </div>
+          </li>
+          {user && user.role === 'admin' && (
+            <li>
+              <div className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
+                <i className="pi pi-user mr-2"></i>
+                <NavLink
+                  to="/all-users"
+                  className="font-medium no-underline text-700"
+                >
+                  All Users
+                </NavLink>
+                <Ripple />
+              </div>
+            </li>
+          )}
+          <li>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full bg-white border-none font-medium text-700"
+            >
+              <i className="pi pi-sign-out mr-2"></i>
+              {/* <span className="font-medium no-underline text-700"> */}
+              Sign Out
+              {/* </span> */}
+              <Ripple />
+            </button>
+          </li>
+        </ul>
+      </div>
+      <div className="mt-auto">
+        <hr className="mb-3 mx-3 border-top-1 border-none surface-border" />
+        <NavLink
+          to="/profile"
+          v-ripple
+          className="m-3 flex align-items-center cursor-pointer p-3 gap-2 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple no-underline"
+        >
+          <Avatar image={user?.profileImage} shape="circle" />
+          <span className="font-bold">
+            {user?.firstName} {user?.lastName}
+          </span>
+        </NavLink>
+      </div>
     </>
   );
 };

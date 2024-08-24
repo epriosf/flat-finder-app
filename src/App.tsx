@@ -1,18 +1,121 @@
+import React, { Suspense, lazy } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import ErrorPage from './pages/ErrorPage';
-import HomePage from './pages/HomePage';
-import { LoginPage } from './pages/LoginPage';
 import RootLayout from './pages/RootPage';
 import './custompanel.css';
+
+// Lazy-loaded pages
+const HomePage = lazy(() => import('./pages/HomePage'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const FavouritePage = lazy(() => import('./pages/FavouritesPage'));
+const AllUserPage = lazy(() => import('./pages/AllUserPage'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const EditFlatPage = lazy(() => import('./pages/EditFlatPage'));
+const MyFlatsPage = lazy(() => import('./pages/MyFlatsPage'));
+const NewFlatPage = lazy(() => import('./pages/NewFlatPage'));
+const RegisterPage = lazy(() => import('./pages/RegisterPage'));
+const UpdateProfilePage = lazy(() => import('./pages/UpdateProfilePage'));
+const FlatDetailsPage = lazy(() => import('./pages/FlatDetailsPage'));
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <RootLayout />,
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <RootLayout />
+      </Suspense>
+    ),
     errorElement: <ErrorPage />,
     children: [
-      { path: '', element: <HomePage /> },
-      { path: 'login', element: <LoginPage /> },
+      {
+        path: '',
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <HomePage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'login',
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <LoginPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'register',
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <RegisterPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'favorites',
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <FavouritePage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'all-users',
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <AllUserPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'edit',
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <EditFlatPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'profile',
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <ProfilePage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'my-flats',
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <MyFlatsPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'new-flat',
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <NewFlatPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'update-profile',
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <UpdateProfilePage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'flat-details',
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <FlatDetailsPage />
+          </Suspense>
+        ),
+      },
+      { path: '*', element: <ErrorPage /> },
     ],
   },
 ]);
