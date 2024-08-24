@@ -1,20 +1,30 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { LoginForm } from './components/Users/LoginForm';
+import './custompanel.css';
 import ErrorPage from './pages/ErrorPage';
 import HomePage from './pages/HomePage';
-import { LoginPage } from './pages/LoginPage';
+import LoginRegister from './pages/LoginRegisterPage';
+import MyFlatsPage from './pages/MyFlatsPage';
 import RegisterPage from './pages/RegisterPage';
 import RootLayout from './pages/RootPage';
-import './custompanel.css';
 
 const router = createBrowserRouter([
   {
     path: '/',
+    element: <LoginRegister />,
+    errorElement: <ErrorPage />,
+    children: [
+      { path: 'login', element: <LoginForm /> },
+      { path: 'register', element: <RegisterPage /> },
+    ],
+  },
+  {
+    path: '/home',
     element: <RootLayout />,
     errorElement: <ErrorPage />,
     children: [
       { path: '', element: <HomePage /> },
-      { path: 'login', element: <LoginPage /> },
-      { path: 'register', element: <RegisterPage /> },
+      { path: 'myFlats', element: <MyFlatsPage /> },
     ],
   },
 ]);

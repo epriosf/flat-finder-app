@@ -5,8 +5,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { useAuth } from '../../hooks/useAuth';
-import GeneralInput from '../Commons/GeneralInput';
-import PasswordInput from '../Commons/PasswordInput';
+import GeneralInput from '../Commons/Inputs/GeneralInput';
+import PasswordInput from '../Commons/Inputs/PasswordInput';
 
 const SignupSchema = Yup.object({
   email: Yup.string().email('Invalid email').required('Email Required'),
@@ -48,68 +48,66 @@ export const LoginForm = () => {
   });
 
   return (
-    <div className="w-24rem">
-      <h2 className="text-center">Welcome back!</h2>
-      <div className="card flex flex-column justify-content-center w-24rem gap-5 text-500 mt-5">
-        <form id="loginForm" onSubmit={formik.handleSubmit}>
-          {/* Display general error message after submission if login fails */}
-          {loginError && (
-            <Message
-              severity="error"
-              text="Incorrect email or password."
-              className="mb-5 w-full justify-content-start text-pink-300 bg-indigo-800"
-            />
-          )}
-          {/* Email */}
-          <GeneralInput
-            id="email"
-            name="email"
-            value={formik.values.email}
-            onChange={formik.handleChange}
-            iconClass="pi pi-at text-500"
-            label="Email"
+    <>
+      <h2 className="text-center">Wellcome to FlatFinder</h2>
+      <form id="loginForm" onSubmit={formik.handleSubmit}>
+        {/* Display general error message after submission if login fails */}
+        {loginError && (
+          <Message
+            severity="error"
+            text="Incorrect email or password."
+            className="mb-5 w-full justify-content-start text-pink-300 bg-indigo-800"
           />
-          {formik.touched.email && formik.errors.email ? (
-            <Message
-              severity="error"
-              text={formik.errors.email}
-              className="mb-1 w-full justify-content-start text-pink-300"
-              style={{ backgroundColor: 'transparent' }}
-            />
-          ) : (
-            <div className="mt-5"></div>
-          )}
+        )}
+        {/* Email */}
+        <GeneralInput
+          id="email"
+          name="email"
+          value={formik.values.email}
+          onChange={formik.handleChange}
+          iconClass="pi pi-at text-500"
+          label="Email"
+        />
+        {formik.touched.email && formik.errors.email ? (
+          <Message
+            severity="error"
+            text={formik.errors.email}
+            className="mb-1 w-full justify-content-start text-pink-300"
+            style={{ backgroundColor: 'transparent' }}
+          />
+        ) : (
+          <div className="mt-5"></div>
+        )}
 
-          {/* Password */}
-          <PasswordInput
-            id="password"
-            name="password"
-            value={formik.values.password}
-            onChange={formik.handleChange}
-            iconClass="pi pi-lock text-500"
-            label="password"
+        {/* Password */}
+        <PasswordInput
+          id="password"
+          name="password"
+          value={formik.values.password}
+          onChange={formik.handleChange}
+          iconClass="pi pi-lock text-500"
+          label="password"
+        />
+        {formik.touched.password && formik.errors.password ? (
+          <Message
+            severity="error"
+            text={formik.errors.password}
+            className="mb-1 w-full justify-content-start text-pink-300"
+            style={{ backgroundColor: 'transparent' }}
           />
-          {formik.touched.password && formik.errors.password ? (
-            <Message
-              severity="error"
-              text={formik.errors.password}
-              className="mb-1 w-full justify-content-start text-pink-300"
-              style={{ backgroundColor: 'transparent' }}
-            />
-          ) : (
-            <div className="mt-5"></div>
-          )}
-          {/* Button */}
-          <Button
-            label="Log In"
-            type="submit"
-            className="w-full bg-indigo-500 text-white"
-          />
-        </form>
-        {/* <Toast ref={toast} position="bottom-left" /> */}
-        {/* <div className="card flex justify-content-center">
+        ) : (
+          <div className="mt-5"></div>
+        )}
+        {/* Button */}
+        <Button
+          label="Log In"
+          type="submit"
+          className="w-full bg-indigo-500 text-white"
+        />
+      </form>
+      {/* <Toast ref={toast} position="bottom-left" /> */}
+      {/* <div className="card flex justify-content-center">
         </div> */}
-      </div>
-    </div>
+    </>
   );
 };

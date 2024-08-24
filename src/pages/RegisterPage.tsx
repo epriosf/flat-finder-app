@@ -8,8 +8,8 @@ import { Nullable } from 'primereact/ts-helpers';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import * as Yup from 'yup';
-import GeneralInput from '../components/Commons/GeneralInput';
-import PasswordInput from '../components/Commons/PasswordInput';
+import GeneralInput from '../components/Commons/Inputs/GeneralInput';
+import PasswordInput from '../components/Commons/Inputs/PasswordInput';
 import {
   registerUserWithAuth,
   registerUserWithFirestore,
@@ -114,7 +114,7 @@ const RegisterPage = () => {
 
   return (
     <>
-      <form onSubmit={formik.handleSubmit} className="w-full">
+      <form id="loginForm" onSubmit={formik.handleSubmit}>
         <GeneralInput
           id="firstName"
           name="firstName"
