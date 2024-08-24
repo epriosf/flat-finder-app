@@ -1,15 +1,12 @@
-import { useNavigate } from 'react-router-dom';
-import { InputText } from 'primereact/inputtext';
-import { FloatLabel } from 'primereact/floatlabel';
-import { IconField } from 'primereact/iconfield';
-import { InputIcon } from 'primereact/inputicon';
-import { Password } from 'primereact/password';
-import { Button } from 'primereact/button';
-import { useAuth } from '../../hooks/useAuth';
-import * as Yup from 'yup';
 import { useFormik } from 'formik';
+import { Button } from 'primereact/button';
 import { Message } from 'primereact/message';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import * as Yup from 'yup';
+import { useAuth } from '../../hooks/useAuth';
+import GeneralInput from '../Commons/GeneralInput';
+import PasswordInput from '../Commons/PasswordInput';
 
 const SignupSchema = Yup.object({
   email: Yup.string().email('Invalid email').required('Email Required'),
@@ -64,22 +61,14 @@ export const LoginForm = () => {
             />
           )}
           {/* Email */}
-          <FloatLabel>
-            <IconField iconPosition="left" className="w-full text-500">
-              <InputIcon className="pi pi-at text-500"> </InputIcon>
-
-              <InputText
-                id="email"
-                value={formik.values.email}
-                className="w-full bg-white "
-                onChange={formik.handleChange}
-                name="email"
-              />
-            </IconField>
-            <label htmlFor="email" className="left-3 text-400">
-              Email
-            </label>
-          </FloatLabel>
+          <GeneralInput
+            id="email"
+            name="email"
+            value={formik.values.email}
+            onChange={formik.handleChange}
+            iconClass="pi pi-at text-500"
+            label="Email"
+          />
           {formik.touched.email && formik.errors.email ? (
             <Message
               severity="error"
@@ -92,23 +81,14 @@ export const LoginForm = () => {
           )}
 
           {/* Password */}
-          <FloatLabel>
-            <IconField iconPosition="left" className="w-full">
-              <InputIcon className="pi pi-lock text-500"> </InputIcon>
-              <Password
-                id="password"
-                value={formik.values.password}
-                className="w-full text-500"
-                onChange={formik.handleChange}
-                name="password"
-                feedback={false}
-                toggleMask
-              />
-            </IconField>
-            <label htmlFor="password" className="left-3 text-400">
-              Password
-            </label>
-          </FloatLabel>
+          <PasswordInput
+            id="password"
+            name="password"
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            iconClass="pi pi-lock text-500"
+            label="password"
+          />
           {formik.touched.password && formik.errors.password ? (
             <Message
               severity="error"

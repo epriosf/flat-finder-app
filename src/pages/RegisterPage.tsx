@@ -4,31 +4,18 @@ import { Calendar } from 'primereact/calendar';
 import { FileUpload, FileUploadHandlerEvent } from 'primereact/fileupload';
 import { FloatLabel } from 'primereact/floatlabel';
 import { Message } from 'primereact/message';
-import { Password } from 'primereact/password';
 import { Nullable } from 'primereact/ts-helpers';
 import { useState } from 'react';
-import { styled } from 'styled-components';
+import { useNavigate } from 'react-router';
 import * as Yup from 'yup';
-import FloatingInput from '../components/Commons/FloatingInput';
+import GeneralInput from '../components/Commons/GeneralInput';
+import PasswordInput from '../components/Commons/PasswordInput';
 import {
   registerUserWithAuth,
   registerUserWithFirestore,
   uploadProfileImage,
 } from '../services/firebase';
 
-const StyledFormContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-  transition: all 0.8s;
-  background-color: rgb(49, 46, 129, 0.3);
-  border: 1px solid white;
-  border-radius: 14px;
-  backdrop-filter: blur(10px);
-  width: 100%;
-`;
 //Min and Max Dates
 const today = new Date();
 let minDate = new Date(today);
@@ -62,7 +49,9 @@ const SignupSchema = Yup.object({
 });
 
 const RegisterPage = () => {
-  const [profileUrl, setProfileUrl] = useState('');
+  const navigate = useNavigate();
+  const [profileFile, setProfileFile] = useState<File | null>(null);
+
   const formik = useFormik({
     initialValues: {
       firstName: '',
@@ -73,27 +62,43 @@ const RegisterPage = () => {
       passwordConfirm: '',
     },
     validationSchema: SignupSchema,
-    onSubmit: async (values) => {
-      const user: User = {
-        firstname: values.firstName,
-        lastname: values.lastName,
-        email: values.email,
-        birthday: values.birthday ? new Date(values.birthday) : new Date(today),
-        password: values.password,
-        profile: profileUrl ? profileUrl : '',
-      };
-      const userCredential = await registerUserWithAuth(
-        user.email,
-        user.password,
-      );
-      await registerUserWithFirestore(userCredential.uid, {
-        firstname: user.firstname,
-        lastname: user.lastname,
-        email: user.email,
-        password: user.password,
-        birthday: user.birthday,
-        profile: user.profile,
-      });
+    onSubmit: async (values, { resetForm }) => {
+      let imageUrl = '';
+
+      try {
+        if (profileFile) {
+          imageUrl = await uploadProfileImage(profileFile);
+        }
+        const user: User = {
+          firstname: values.firstName,
+          lastname: values.lastName,
+          email: values.email,
+          birthday: values.birthday
+            ? new Date(values.birthday)
+            : new Date(today),
+          password: values.password,
+          profile: imageUrl,
+        };
+
+        const userCredential = await registerUserWithAuth(
+          user.email,
+          user.password,
+        );
+        await registerUserWithFirestore(userCredential.uid, {
+          firstname: user.firstname,
+          lastname: user.lastname,
+          email: user.email,
+          password: user.password,
+          birthday: user.birthday,
+          profile: user.profile,
+        });
+        console.log('User Register Succesfully');
+        resetForm();
+        setProfileFile(null);
+        navigate('/login');
+      } catch (error) {
+        console.error('Error registering user:', error);
+      }
     },
   });
 
@@ -104,178 +109,155 @@ const RegisterPage = () => {
 
   const handleUploadImage = async (e: FileUploadHandlerEvent) => {
     const file = e.files[0];
-    const imageUrl = await uploadProfileImage(file);
-    setProfileUrl(imageUrl);
-    console.log('Image Url', imageUrl);
+    setProfileFile(file);
   };
 
   return (
     <>
-      <StyledFormContainer>
-        <form onSubmit={formik.handleSubmit} className="w-full">
-          <FloatingInput
-            id="firstName"
-            value={formik.values.firstName}
-            onChange={formik.handleChange}
-            iconClass="pi pi-user"
-            label="First Name"
-            type="text"
+      <form onSubmit={formik.handleSubmit} className="w-full">
+        <GeneralInput
+          id="firstName"
+          name="firstName"
+          value={formik.values.firstName}
+          onChange={formik.handleChange}
+          iconClass="pi pi-user"
+          label="FirstName"
+          type="text"
+        />
+        {formik.touched.firstName && formik.errors.firstName ? (
+          <Message
+            severity="error"
+            text={formik.errors.firstName}
+            className="mb-1 w-full justify-content-start text-pink-300"
+            style={{ backgroundColor: 'transparent' }}
           />
-          {formik.touched.firstName && formik.errors.firstName ? (
-            <Message
-              severity="error"
-              text={formik.errors.firstName}
-              className="mb-1 pt-1"
-              style={{ backgroundColor: 'transparent' }}
-            />
-          ) : (
-            <div className="mt-5"></div>
-          )}
+        ) : (
+          <div className="mt-5"></div>
+        )}
 
-          <FloatingInput
-            id="lastName"
-            value={formik.values.lastName}
-            onChange={formik.handleChange}
-            iconClass="pi pi-user"
-            label="Last Name"
-            type="text"
+        <GeneralInput
+          id="lastName"
+          name="lastName"
+          value={formik.values.lastName}
+          onChange={formik.handleChange}
+          iconClass="pi pi-user"
+          label="LastName"
+          type="text"
+        />
+
+        {formik.touched.lastName && formik.errors.lastName ? (
+          <Message
+            severity="error"
+            text={formik.errors.lastName}
+            className="mb-1 w-full justify-content-start text-pink-300"
+            style={{ backgroundColor: 'transparent' }}
           />
-          {formik.touched.lastName && formik.errors.lastName ? (
-            <Message
-              severity="error"
-              text={formik.errors.lastName}
-              className="mb-1 mt--1"
-              style={{ backgroundColor: 'transparent' }}
-            />
-          ) : (
-            <div className="mt-5"></div>
-          )}
+        ) : (
+          <div className="mt-5"></div>
+        )}
 
-          <FloatingInput
-            id="email"
-            value={formik.values.email}
-            onChange={formik.handleChange}
-            iconClass="pi pi-envelope"
-            label="Email"
-            type="text"
+        <GeneralInput
+          id="email"
+          name="email"
+          value={formik.values.email}
+          onChange={formik.handleChange}
+          iconClass="pi pi-envelope"
+          label="Email"
+          type="email"
+        />
+
+        {formik.touched.email && formik.errors.email ? (
+          <Message
+            severity="error"
+            text={formik.errors.email}
+            className="mb-1 w-full justify-content-start text-pink-300"
+            style={{ backgroundColor: 'transparent' }}
           />
-          {formik.touched.email && formik.errors.email ? (
-            <Message
-              severity="error"
-              text={formik.errors.email}
-              className="mb-1"
-              style={{ backgroundColor: 'transparent' }}
-            />
-          ) : (
-            <div className="mt-5"></div>
-          )}
+        ) : (
+          <div className="mt-5"></div>
+        )}
 
-          <FloatLabel>
-            <div className="p-inputgroup">
-              <span className="p-inputgroup-addon">
-                <i className="pi pi-calendar"></i>
-              </span>
-              <Calendar
-                inputId="birth_date"
-                value={formik.values.birthday}
-                onChange={(e) => handleBirthdayChange(e.value)}
-                inputStyle={{ borderLeft: 'none' }}
-                minDate={minDate}
-                dateFormat="dd/mm/yy"
-              />
-            </div>
-            <label htmlFor="birth_date" className="floating-label pl-5">
-              Birth Date
-            </label>
-          </FloatLabel>
-          {formik.touched.birthday && formik.errors.birthday ? (
-            <Message
-              severity="error"
-              text={formik.errors.birthday}
-              className="mb-1 mt--1"
-              style={{ backgroundColor: 'transparent' }}
+        <FloatLabel>
+          <div className="p-inputgroup">
+            <span className="p-inputgroup-addon">
+              <i className="pi pi-calendar"></i>
+            </span>
+            <Calendar
+              inputId="birth_date"
+              value={formik.values.birthday}
+              onChange={(e) => handleBirthdayChange(e.value)}
+              inputStyle={{ borderLeft: 'none' }}
+              minDate={minDate}
+              dateFormat="dd/mm/yy"
             />
-          ) : (
-            <div className="mt-5"></div>
-          )}
-
-          <FloatLabel>
-            <div className="p-inputgroup ">
-              <span className="p-inputgroup-addon">
-                <i className="pi pi-lock"></i>
-              </span>
-              <Password
-                inputId="password"
-                value={formik.values.password}
-                onChange={formik.handleChange}
-                className="w-full"
-                inputStyle={{ borderLeft: 'none' }}
-                onBlur={formik.handleBlur}
-              />
-            </div>
-            <label htmlFor="password" className="floating-label pl-5 w-full">
-              Password
-            </label>
-          </FloatLabel>
-          {formik.touched.password && formik.errors.password ? (
-            <Message
-              severity="error"
-              text={formik.errors.password}
-              className="mb-1"
-              style={{ backgroundColor: 'transparent' }}
-            />
-          ) : (
-            <div className="mt-5"></div>
-          )}
-
-          <FloatLabel>
-            <div className="p-inputgroup ">
-              <span className="p-inputgroup-addon">
-                <i className="pi pi-lock"></i>
-              </span>
-              <Password
-                inputId="passwordConfirm"
-                value={formik.values.passwordConfirm}
-                onChange={formik.handleChange}
-                className="w-full"
-                inputStyle={{ borderLeft: 'none' }}
-                onBlur={formik.handleBlur}
-              />
-            </div>
-            <label
-              htmlFor="passwordConfirm"
-              className="floating-label pl-5 w-full"
-            >
-              Confirm Password
-            </label>
-          </FloatLabel>
-          {formik.touched.passwordConfirm && formik.errors.passwordConfirm ? (
-            <Message
-              severity="error"
-              text={formik.errors.passwordConfirm}
-              className="mb-1"
-              style={{ backgroundColor: 'transparent' }}
-            />
-          ) : (
-            <div className="mt-5"></div>
-          )}
-
-          <FileUpload
-            name="demo[]"
-            multiple
-            accept="image/*"
-            maxFileSize={1000000}
-            emptyTemplate={
-              <p className="m-0">Drag and drop images to here to upload.</p>
-            }
-            chooseLabel="Photo"
-            customUpload
-            uploadHandler={handleUploadImage}
+          </div>
+          <label htmlFor="birth_date" className="left-3 text-400">
+            Birth Date
+          </label>
+        </FloatLabel>
+        {formik.touched.birthday && formik.errors.birthday ? (
+          <Message
+            severity="error"
+            text={formik.errors.birthday}
+            className="mb-1 w-full justify-content-start text-pink-300"
+            style={{ backgroundColor: 'transparent' }}
           />
+        ) : (
+          <div className="mt-5"></div>
+        )}
+        <PasswordInput
+          id="password"
+          name="password"
+          value={formik.values.password}
+          onChange={formik.handleChange}
+          iconClass="pi pi-lock text-500"
+          label="password"
+        />
+        {formik.touched.password && formik.errors.password ? (
+          <Message
+            severity="error"
+            text={formik.errors.password}
+            className="mb-1 w-full justify-content-start text-pink-300"
+            style={{ backgroundColor: 'transparent' }}
+          />
+        ) : (
+          <div className="mt-5"></div>
+        )}
+        <PasswordInput
+          id="passwordConfirm"
+          name="passwordConfirm"
+          value={formik.values.passwordConfirm}
+          onChange={formik.handleChange}
+          iconClass="pi pi-lock text-500"
+          label="password confirm"
+        />
+        {formik.touched.passwordConfirm && formik.errors.passwordConfirm ? (
+          <Message
+            severity="error"
+            text={formik.errors.passwordConfirm}
+            className="mb-1 w-full justify-content-start text-pink-300"
+            style={{ backgroundColor: 'transparent' }}
+          />
+        ) : (
+          <div className="mt-5"></div>
+        )}
 
-          <Button label="Sign up" className="w-full mt-5" type="submit" />
-        </form>
-      </StyledFormContainer>
+        <FileUpload
+          name="demo[]"
+          multiple={false}
+          accept="image/*"
+          maxFileSize={1000000}
+          emptyTemplate={
+            <p className="m-0">Drag and drop images to here to upload.</p>
+          }
+          chooseLabel="Photo"
+          customUpload
+          auto
+          uploadHandler={handleUploadImage}
+        />
+
+        <Button label="Sign up" className="w-full mt-5" type="submit" />
+      </form>
     </>
   );
 };
