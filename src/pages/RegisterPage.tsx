@@ -22,7 +22,7 @@ let minDate = new Date(today);
 let maxDate = new Date(today);
 
 //User Type
-export interface User {
+export interface UserRegister {
   firstname: string;
   lastname: string;
   email: string;
@@ -69,7 +69,7 @@ const RegisterPage = () => {
         if (profileFile) {
           imageUrl = await uploadProfileImage(profileFile);
         }
-        const user: User = {
+        const user: UserRegister = {
           firstname: values.firstName,
           lastname: values.lastName,
           email: values.email,

@@ -1,4 +1,7 @@
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
 import { auth, db } from '../config/firebase';
 import {
   collection,
@@ -6,8 +9,12 @@ import {
   getDocs,
   query,
   where,
+  setDoc,
+  addDoc,
+  doc,
 } from 'firebase/firestore';
 import { User } from '../contexts/authContext';
+import { UserRegister } from '../pages/RegisterPage';
 
 const collectionName = 'users';
 const usersColletionRef = collection(db, collectionName);
@@ -53,6 +60,34 @@ export const getUserByEmail = async (email: string): Promise<User[]> => {
     return users;
   } catch (error) {
     console.error('Error fetching user by email:', error);
+    throw error;
+  }
+};
+
+export const createUser = async (user: UserRegister) => {
+  await addDoc(usersColletionRef, user);
+};
+//Method to regsister auth user in Firebase
+export const registerUserWithAuth = async (email: string, password: string) => {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password,
+    );
+    return userCredential.user;
+  } catch (error) {
+    console.error('Error registering user with auth:', error);
+    throw error;
+  }
+};
+
+//method to register user with firestore in Firebase
+export const registerUserWithFirestore = async (userId: string, user: User) => {
+  try {
+    await setDoc(doc(db, collectionName, userId), user);
+  } catch (error) {
+    console.error('Error registering user in Firestore', error);
     throw error;
   }
 };
