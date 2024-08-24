@@ -1,8 +1,8 @@
 import Logo from './../../images/logo.svg';
 import { Sidebar } from 'primereact/sidebar';
-import MainNavigation from './MainNavigation';
 import { Image } from 'primereact/image';
 import { Button } from 'primereact/button';
+import MainNavigation from './Navigations/MainNavigation';
 
 interface NavbarProps {
   visible: boolean;

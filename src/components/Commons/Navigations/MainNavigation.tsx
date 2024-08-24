@@ -1,8 +1,8 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Ripple } from 'primereact/ripple';
 import { Avatar } from 'primereact/avatar';
-import { useAuth } from '../../hooks/useAuth';
-import { logoutUser } from '../../services/authService';
+import { useAuth } from '../../../hooks/useAuth';
+import { logoutUser } from '../../../services/authService';
 
 interface MainNavigationProps {
   // visible: boolean;
@@ -16,7 +16,7 @@ const MainNavigation = ({ setVisible }: MainNavigationProps) => {
   const handleLogout = () => {
     logoutUser();
     setVisible(false);
-    navigate('/login');
+    navigate('/home/favorites');
   };
 
   const handleVisible = () => {
@@ -31,7 +31,7 @@ const MainNavigation = ({ setVisible }: MainNavigationProps) => {
             <div className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
               <i className="pi pi-home mr-2"></i>
               <NavLink
-                to="/"
+                to="/home"
                 className="font-medium no-underline text-700"
                 onClick={handleVisible}
               >
@@ -44,7 +44,7 @@ const MainNavigation = ({ setVisible }: MainNavigationProps) => {
             <div className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
               <i className="pi pi-heart mr-2"></i>
               <NavLink
-                to="/favorites"
+                to="/home/favorites"
                 className="font-medium no-underline text-700"
                 onClick={handleVisible}
               >
@@ -57,7 +57,7 @@ const MainNavigation = ({ setVisible }: MainNavigationProps) => {
             <div className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
               <i className="pi pi-face-smile mr-2"></i>
               <NavLink
-                to="/my-flats"
+                to="/home/my-flats"
                 className="font-medium no-underline text-700"
                 onClick={handleVisible}
               >
@@ -70,7 +70,7 @@ const MainNavigation = ({ setVisible }: MainNavigationProps) => {
             <div className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
               <i className="pi pi-plus mr-2"></i>
               <NavLink
-                to="/new-flat"
+                to="/home/new-flat"
                 className="font-medium no-underline text-700"
                 onClick={handleVisible}
               >
@@ -84,7 +84,7 @@ const MainNavigation = ({ setVisible }: MainNavigationProps) => {
               <div className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
                 <i className="pi pi-user mr-2"></i>
                 <NavLink
-                  to="/all-users"
+                  to="/home/all-users"
                   className="font-medium no-underline text-700"
                   onClick={handleVisible}
                 >
@@ -113,7 +113,7 @@ const MainNavigation = ({ setVisible }: MainNavigationProps) => {
       <div className="mt-auto">
         <hr className="mb-3 mx-3 border-top-1 border-none surface-border" />
         <NavLink
-          to="/profile"
+          to="/home/profile"
           v-ripple
           className="m-3 flex align-items-center cursor-pointer p-3 gap-2 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple no-underline"
           onClick={handleVisible}
