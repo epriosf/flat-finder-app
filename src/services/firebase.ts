@@ -84,7 +84,10 @@ export const registerUserWithAuth = async (email: string, password: string) => {
 };
 
 //method to register user with firestore in Firebase
-export const registerUserWithFirestore = async (userId: string, user: User) => {
+export const registerUserWithFirestore = async (
+  userId: string,
+  user: UserRegister,
+) => {
   try {
     await setDoc(doc(db, collectionName, userId), user);
   } catch (error) {
