@@ -16,7 +16,10 @@ const Header = () => {
 
   return (
     <>
-      <div className="header flex w-full bg-indigo-900 text-white p-3 justify-content-between">
+      <header
+        id="header"
+        className="header flex w-full bg-indigo-900 text-white p-3 justify-content-between fixed"
+      >
         <div className="flex gap-3 align-items-center">
           <a href="home.html">
             <Image src={LogoWhite} alt="Image" width="115" />
@@ -24,7 +27,7 @@ const Header = () => {
           <p>Hello {user?.firstName}!</p>
         </div>
         <Button icon="pi pi-bars" onClick={() => setVisible(true)} />
-      </div>
+      </header>
       <Navbar visible={visible} setVisible={setVisible} />
     </>
   );
