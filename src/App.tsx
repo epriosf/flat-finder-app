@@ -1,14 +1,13 @@
-import { Suspense, lazy } from 'react';
+import { lazy, Suspense } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './custompanel.css';
 import ErrorPage from './pages/ErrorPage';
+import LoginRegister from './pages/LoginRegisterPage';
 import RootLayout from './pages/RootPage';
-import './custompanel.css';
-import { LoginForm } from './components/Users/LoginForm';
 
 // Lazy-loaded pages
 const HomePage = lazy(() => import('./pages/HomePage'));
-const LoginPage = lazy(() => import('./pages/LoginPage'));
+const LoginForm = lazy(() => import('./components/Users/LoginForm'));
 const FavouritePage = lazy(() => import('./pages/FavouritesPage'));
 const AllUserPage = lazy(() => import('./pages/AllUserPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
@@ -22,7 +21,11 @@ const FlatDetailsPage = lazy(() => import('./pages/FlatDetailsPage'));
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <LoginPage />,
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <LoginRegister />
+      </Suspense>
+    ),
     errorElement: <ErrorPage />,
     children: [
       {
