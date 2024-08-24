@@ -120,7 +120,7 @@ const RegisterPage = () => {
           name="firstName"
           value={formik.values.firstName}
           onChange={formik.handleChange}
-          iconClass="pi pi-user"
+          iconClass="pi pi-user text-500"
           label="FirstName"
           type="text"
         />
@@ -140,7 +140,7 @@ const RegisterPage = () => {
           name="lastName"
           value={formik.values.lastName}
           onChange={formik.handleChange}
-          iconClass="pi pi-user"
+          iconClass="pi pi-user text-500"
           label="LastName"
           type="text"
         />
@@ -161,7 +161,7 @@ const RegisterPage = () => {
           name="email"
           value={formik.values.email}
           onChange={formik.handleChange}
-          iconClass="pi pi-envelope"
+          iconClass="pi pi-envelope text-500"
           label="Email"
           type="email"
         />
@@ -180,7 +180,7 @@ const RegisterPage = () => {
         <FloatLabel>
           <div className="p-inputgroup">
             <span className="p-inputgroup-addon">
-              <i className="pi pi-calendar"></i>
+              <i className="pi pi-calendar text-500"></i>
             </span>
             <Calendar
               inputId="birth_date"

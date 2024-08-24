@@ -4,10 +4,11 @@ import './custompanel.css';
 import ErrorPage from './pages/ErrorPage';
 import LoginRegister from './pages/LoginRegisterPage';
 import RootLayout from './pages/RootPage';
+// import LoginPage from './pages/LoginPage';
 
 // Lazy-loaded pages
 const HomePage = lazy(() => import('./pages/HomePage'));
-const LoginForm = lazy(() => import('./components/Users/LoginForm'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
 const FavouritePage = lazy(() => import('./pages/FavouritesPage'));
 const AllUserPage = lazy(() => import('./pages/AllUserPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
@@ -32,7 +33,7 @@ const router = createBrowserRouter([
         path: 'login',
         element: (
           <Suspense fallback={<div>Loading...</div>}>
-            <LoginForm />
+            <LoginPage />
           </Suspense>
         ),
       },

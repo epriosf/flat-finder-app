@@ -18,7 +18,7 @@ const LoginRegisterNavigation = () => {
       ),
     },
     {
-      label: 'Register',
+      label: 'Sign In',
       template: (item, options) => (
         <NavLink
           to="/register"
@@ -33,7 +33,7 @@ const LoginRegisterNavigation = () => {
   ];
   return (
     <>
-      <TabMenu model={items} />
+      <TabMenu className="w-full" model={items} />
     </>
   );
 };

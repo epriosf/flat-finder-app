@@ -49,8 +49,7 @@ const LoginForm = () => {
 
   return (
     <>
-      <h2 className="text-center">Wellcome to FlatFinder</h2>
-      <form id="loginForm" onSubmit={formik.handleSubmit}>
+      <form id="loginForm" className="w-full" onSubmit={formik.handleSubmit}>
         {/* Display general error message after submission if login fails */}
         {loginError && (
           <Message

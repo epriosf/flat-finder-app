@@ -1,9 +1,11 @@
+/* Custom classes */
+
 .left-3 {
   left: 3rem;
 }
 .h-75 {
   height: 75vh;
-  max-height: 400px;
+  max-height: 475px;
 }
 
 .bg-login {
@@ -38,16 +40,31 @@
   color: transparent;
 }
 
+/* Login Register */
+
 .p-tabview .p-tabview-nav,
 .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link,
 .p-tabview .p-tabview-nav li .p-tabview-nav-link,
 .p-tabview .p-tabview-panels {
   background-color: transparent;
 }
+.p-tabmenu {
+  overflow: initial;
+  width: 100%;
+}
+
+.p-tabmenu .p-tabmenu-nav {
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+}
 
 .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link,
 .p-tabview .p-tabview-nav .p-tabview-ink-bar {
   color: var(--indigo-50);
+}
+.p-tabmenu .p-tabmenu-nav .p-tabmenu-ink-bar {
+  background-color: transparent !important;
 }
 .p-tabview .p-tabview-nav .p-tabview-ink-bar {
   background-color: var(--indigo-50);
@@ -83,4 +100,22 @@
 #loginForm .p-inline-message.p-inline-message-error .p-inline-message-icon,
 #registerForm.p-inline-message.p-inline-message-error .p-inline-message-icon {
   color: var(--pink-300);
+}
+
+.p-menuitem-link {
+  color: #fff;
+  background-color: transparent !important;
+  padding: 1rem;
+  text-decoration: none;
+}
+
+.p-highlight {
+  color: #fff;
+  background-color: var(--indigo-700) !important;
+  border-radius: 4px;
+  transition: 500ms cubic-bezier(0.35, 0, 0.25, 1);
+}
+
+li.p-tabmenuitem.p-highlight {
+  background-color: transparent !important;
 }
