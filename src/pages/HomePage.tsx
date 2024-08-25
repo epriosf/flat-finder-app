@@ -1,11 +1,10 @@
-import { useAuth } from '../hooks/useAuth';
+import FlatList from '../components/Flats/FlatList';
 
 const HomePage = () => {
-  const { user } = useAuth();
   return (
     <>
       <h1>Home Page</h1>
-      <p>{user?.email}</p>
+      <FlatList />
     </>
   );
 };

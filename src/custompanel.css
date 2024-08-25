@@ -42,7 +42,9 @@
 .text-transparent {
   color: transparent;
 }
-
+#header {
+  z-index: 900;
+}
 /* Login Register */
 
 .p-tabview .p-tabview-nav,
@@ -64,25 +66,25 @@
 
 .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link,
 .p-tabview .p-tabview-nav .p-tabview-ink-bar {
-  color: var(--indigo-50);
+  color: var(--primary-50);
 }
 .p-tabmenu .p-tabmenu-nav .p-tabmenu-ink-bar {
   background-color: transparent !important;
 }
 .p-tabview .p-tabview-nav .p-tabview-ink-bar {
-  background-color: var(--indigo-50);
+  background-color: var(--primary-50);
 }
 
 .p-tabview .p-tabview-nav li .p-tabview-nav-link {
-  color: var(--indigo-100);
+  color: var(--primary-100);
 }
 
 .p-inputtext:enabled:focus {
   box-shadow:
-    inset 0 0 0 1px var(--indigo-300),
-    inset 0 0 0 1px var(--indigo-300),
-    inset 0 0 0 1px var(--indigo-300),
-    inset 0 0 0 1px var(--indigo-300);
+    inset 0 0 0 1px var(--primary-300),
+    inset 0 0 0 1px var(--primary-300),
+    inset 0 0 0 1px var(--primary-300),
+    inset 0 0 0 1px var(--primary-300);
 }
 
 .p-tabview .p-tabview-nav {
@@ -114,11 +116,41 @@
 
 .p-highlight {
   color: #fff;
-  background-color: var(--indigo-700) !important;
+  background-color: var(--primary-700) !important;
   border-radius: 4px;
   transition: 500ms cubic-bezier(0.35, 0, 0.25, 1);
 }
 
 li.p-tabmenuitem.p-highlight {
   background-color: transparent !important;
+}
+
+/* Flats */
+.flat-card {
+  position: relative;
+  background-color: var(--primary-50);
+}
+.flat-card .p-card-content {
+  padding: 0;
+}
+
+.flat-card .p-card-footer {
+  position: absolute;
+  top: 0;
+  right: 10px;
+}
+
+.flat-card .p-card-header img {
+  border-radius: 0.75rem 0.75rem 0 0;
+}
+
+.chip-yes {
+  background-color: var(--primary-100); /* Green for Yes */
+  border: 1px solid var(--primary-300);
+}
+
+.chip-no {
+  background-color: var(--primary-100); /* Green for Yes */
+  border: 1px solid var(--primary-300);
+  opacity: 0.7;
 }

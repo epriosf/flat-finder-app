@@ -82,7 +82,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'edit',
+        path: 'edit-flat',
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <EditFlatPage />
