@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Flat } from '../components/Interfaces/FlatInterface';
-// import { UserFlat } from './../components/Interfeces/UserFlatInterface';
 import { getUserByEmail } from '../services/firebase';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
@@ -12,7 +11,6 @@ interface EditFlatPageProps {
 
 const EditFlatPage: React.FC<EditFlatPageProps> = ({ flat, onClose }) => {
   const [updatedFlat, setUpdatedFlat] = useState<Flat>(flat);
-  // const [user, setUser] = useState<UserFlat | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {

@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { getUserByEmail } from '../../services/firebase';
 import { Dialog } from 'primereact/dialog';
 import { Flat } from '../Interfaces/FlatInterface'; // Updated import
-import { UserFlat } from '../Interfaces/UserFlatInterface';
+import { User } from '../Interfaces/UserInterface';
 import EditFlatPage from '../../pages/EditFlatPage';
 import { Avatar } from 'primereact/avatar';
 import { Timestamp } from 'firebase/firestore';
@@ -17,7 +17,7 @@ import { Timestamp } from 'firebase/firestore';
 // }
 
 const FlatItem = ({ flat }: { flat: Flat }) => {
-  const [user, setUser] = useState<UserFlat | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [dialogVisible, setDialogVisible] = useState<boolean>(false);
 

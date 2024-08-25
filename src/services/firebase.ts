@@ -19,7 +19,7 @@ import {
 // import { User } from '../contexts/authContext';
 import { UserRegister } from '../pages/RegisterPage';
 import { Flat } from '../components/Interfaces/FlatInterface';
-import { UserFlat } from '../components/Interfaces/UserFlatInterface';
+import { User } from '../components/Interfaces/UserInterface';
 
 const collectionName = 'users';
 const usersColletionRef = collection(db, collectionName);
@@ -76,13 +76,13 @@ export const loginUser = async (email: string, password: string) => {
 //   }
 // };
 
-export const getUserByEmail = async (email: string): Promise<UserFlat[]> => {
+export const getUserByEmail = async (email: string): Promise<User[]> => {
   try {
     const queryData = query(usersColletionRef, where('email', '==', email));
     const querySnapshot = await getDocs(queryData);
 
     const users = querySnapshot.docs.map((doc) => {
-      const data = doc.data() as UserFlat; // Ensure it matches UserFlat
+      const data = doc.data() as User; // Ensure it matches User
 
       return {
         ...data,
@@ -96,51 +96,6 @@ export const getUserByEmail = async (email: string): Promise<UserFlat[]> => {
     throw error;
   }
 };
-// The `getUserById` function should return data matching the `FlatUser` interface
-export const getUserById = async (userId: string): Promise<UserFlat | null> => {
-  try {
-    console.log(`Fetching user data for ID: ${userId}`);
-    const userDocRef = doc(db, 'users', userId);
-    console.log(`Document reference path: ${userDocRef.path}`);
-
-    const userDoc = await getDoc(userDocRef);
-    console.log(`Document exists: ${userDoc.exists()}`);
-
-    if (userDoc.exists()) {
-      const userData = userDoc.data();
-      console.log(`User data found:`, userData);
-      return userData as UserFlat;
-    } else {
-      console.error(`User with ID ${userId} not found.`);
-      throw new Error('User not found');
-    }
-  } catch (error) {
-    console.error('Error fetching user data:', error);
-    throw error;
-  }
-};
-const testUserId = 'AZG3EElxZNXfrmQm8cMg5d1UhII3'; // Replace with an actual user ID from your Firestore
-getUserById(testUserId);
-// export const getUserById = async (userId: string): Promise<UserFlat | null> => {
-//   try {
-//     // Log the userId and the document reference
-//     console.log(`Fetching user data for ID: ${userId}`);
-//     const userDocRef = doc(db, 'users', userId);
-//     console.log(`Document reference: ${userDocRef.path}`);
-
-//     const userDoc = await getDoc(userDocRef);
-//     if (userDoc.exists()) {
-//       console.log(`User data found:`, userDoc.data());
-//       return userDoc.data() as UserFlat;
-//     } else {
-//       console.error(`User with ID ${userId} not found.`);
-//       throw new Error('User not found');
-//     }
-//   } catch (error) {
-//     console.error('Error fetching user data:', error);
-//     throw error;
-//   }
-// };
 
 export const createUser = async (user: UserRegister) => {
   await addDoc(usersColletionRef, user);
