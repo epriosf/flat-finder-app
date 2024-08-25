@@ -137,7 +137,8 @@ li.p-tabmenuitem.p-highlight {
 .flat-card .p-card-footer {
   position: absolute;
   top: 0;
-  right: 10px;
+  right: 0.5rem;
+  padding-top: 0.5rem;
 }
 
 .flat-card .p-card-header img {

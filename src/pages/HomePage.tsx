@@ -1,9 +1,10 @@
 import FlatList from '../components/Flats/FlatList';
+import FlatTitle from '../components/Flats/FlatTitle';
 
 const HomePage = () => {
   return (
     <>
-      <h1>Home Page</h1>
+      <FlatTitle title="Home" />
       <FlatList />
     </>
   );
