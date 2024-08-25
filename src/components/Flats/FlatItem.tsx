@@ -166,7 +166,8 @@ const FlatItem = ({ flat }: { flat: Flat }) => {
         style={{ width: '50vw' }}
         onHide={handleDialogClose}
       >
-        <EditFlatPage flat={flat} onClose={handleDialogClose} />
+        <EditFlatPage />
+        {/* <EditFlatPage flat={flat} onClose={handleDialogClose} /> */}
       </Dialog>
     </>
   );
