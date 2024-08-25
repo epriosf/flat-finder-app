@@ -6,20 +6,31 @@ import { auth, db, storage } from '../config/firebase';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import {
   collection,
-  DocumentData,
+  // DocumentData,
   getDocs,
   query,
   where,
   setDoc,
   addDoc,
   doc,
+  getDoc,
+  updateDoc,
 } from 'firebase/firestore';
-import { User } from '../contexts/authContext';
+// import { User } from '../contexts/authContext';
 import { UserRegister } from '../pages/RegisterPage';
+import { Flat } from '../components/Interfaces/FlatInterface';
+import { User } from '../components/Interfaces/UserInterface';
 
 const collectionName = 'users';
 const usersColletionRef = collection(db, collectionName);
+const flatsCollection = collection(db, 'flats');
 
+// export interface FlatUser {
+//   firstName: string;
+//   lastName: string;
+//   profile: string;
+//   email: string;
+// }
 //Method to login a User
 export const loginUser = async (email: string, password: string) => {
   try {
@@ -37,25 +48,46 @@ export const loginUser = async (email: string, password: string) => {
 };
 
 // e// Method to get user details by email
+// export const getUserByEmail = async (email: string): Promise<User[]> => {
+//   try {
+//     const queryData = query(usersColletionRef, where('email', '==', email));
+//     const querySnapshot = await getDocs(queryData);
+
+//     // Convert Firestore data to the User type
+//     const users = querySnapshot.docs.map((doc) => {
+//       const data = doc.data() as DocumentData;
+
+//       return {
+//         id: doc.id,
+//         email: data.email,
+//         firstName: data.firstName,
+//         lastName: data.lastName,
+//         birthday: data.birthday,
+//         role: data.role,
+//         profileImage: data.profileImage,
+//         isAdmin: data.isAdmin,
+//       } as User;
+//     });
+
+//     return users;
+//   } catch (error) {
+//     console.error('Error fetching user by email:', error);
+//     throw error;
+//   }
+// };
+
 export const getUserByEmail = async (email: string): Promise<User[]> => {
   try {
     const queryData = query(usersColletionRef, where('email', '==', email));
     const querySnapshot = await getDocs(queryData);
 
-    // Convert Firestore data to the User type
     const users = querySnapshot.docs.map((doc) => {
-      const data = doc.data() as DocumentData;
+      const data = doc.data() as User; // Ensure it matches User
 
       return {
-        id: doc.id,
-        email: data.email,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        birthday: data.birthday,
-        role: data.role,
-        profileImage: data.profileImage,
-        isAdmin: data.isAdmin,
-      } as User;
+        ...data,
+        profile: data.profile || '', // Ensure profile is included
+      };
     });
 
     return users;
@@ -106,6 +138,125 @@ export const uploadProfileImage = async (file: File) => {
     return downloadURL;
   } catch (error) {
     console.error('Error uploading file:', error);
+    throw error;
+  }
+};
+
+// The `getFlats` function should return data matching the `Flat` interface
+export const getFlats = async (): Promise<Flat[]> => {
+  const flatsSnapshot = await getDocs(flatsCollection);
+  return flatsSnapshot.docs.map((doc) => doc.data() as Flat); // Type assertion to Flat
+};
+
+export const uploadFlatImage = async (file: File) => {
+  try {
+    const storageRefFlats = ref(storage, `flatImages/${file.name}`);
+    await uploadBytes(storageRefFlats, file);
+    const downloadURL = await getDownloadURL(storageRefFlats);
+
+    console.log('Download URL:', downloadURL); // Add this line to debug
+    return downloadURL;
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    throw error;
+  }
+};
+
+export const getFlatsByOwner = async (ownerEmail: string): Promise<Flat[]> => {
+  try {
+    const flatsSnapshot = await getDocs(
+      query(flatsCollection, where('flatUser', '==', ownerEmail)),
+    );
+    return flatsSnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        areaSize: data.areaSize,
+        city: data.city,
+        dateAvailable: data.dateAvailable.toDate(),
+        hasAc: data.hasAc,
+        price: data.price,
+        streetName: data.streetName,
+        streetNumber: data.streetNumber,
+        yearBuilt: data.yearBuilt,
+        flatImage: data.flatImage,
+        flatUser: data.flatUser,
+        rooms: data.rooms,
+        bathrooms: data.bathrooms,
+      } as Flat;
+    });
+  } catch (error) {
+    console.error('Error fetching flats by owner:', error);
+    throw error;
+  }
+};
+
+export const getFlatsByUserId = async (userEmail: string): Promise<Flat[]> => {
+  try {
+    const flatsSnapshot = await getDocs(
+      query(flatsCollection, where('flatUser', '==', userEmail)),
+    );
+    return flatsSnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        areaSize: data.areaSize,
+        city: data.city,
+        dateAvailable: data.dateAvailable.toDate(),
+        hasAc: data.hasAc,
+        price: data.price,
+        streetName: data.streetName,
+        streetNumber: data.streetNumber,
+        yearBuilt: data.yearBuilt,
+        flatImage: data.flatImage,
+        flatUser: data.flatUser,
+        rooms: data.rooms,
+        bathrooms: data.bathrooms,
+      } as Flat;
+    });
+  } catch (error) {
+    console.error('Error fetching flats by user email:', error);
+    throw error;
+  }
+};
+
+export const getFlatById = async (flatId: string): Promise<Flat | null> => {
+  try {
+    const flatDoc = await getDoc(doc(db, 'flats', flatId));
+    if (flatDoc.exists()) {
+      const data = flatDoc.data();
+      return {
+        id: flatDoc.id,
+        areaSize: data.areaSize,
+        city: data.city,
+        dateAvailable: data.dateAvailable.toDate(),
+        hasAc: data.hasAc,
+        price: data.price,
+        streetName: data.streetName,
+        streetNumber: data.streetNumber,
+        yearBuilt: data.yearBuilt,
+        flatImage: data.flatImage,
+        flatUser: data.flatUser,
+        rooms: data.rooms,
+        bathrooms: data.bathrooms,
+      } as Flat;
+    } else {
+      console.error(`Flat with ID ${flatId} not found.`);
+      return null;
+    }
+  } catch (error) {
+    console.error('Error fetching flat by ID:', error);
+    throw error;
+  }
+};
+
+export const updateFlat = async (flat: Flat) => {
+  try {
+    const { id, ...flatData } = flat; // Exclude id from the data
+    const flatRef = doc(db, 'flats', id);
+    await updateDoc(flatRef, flatData); // Pass only the flat data to updateDoc
+  } catch (error) {
+    console.error('Error updating flat:', error);
     throw error;
   }
 };
