@@ -2,18 +2,18 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import { auth, db, storage } from '../config/firebase';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import {
+  addDoc,
   collection,
+  doc,
   DocumentData,
   getDocs,
   query,
-  where,
   setDoc,
-  addDoc,
-  doc,
+  where,
 } from 'firebase/firestore';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { auth, db, storage } from '../config/firebase';
 import { User } from '../contexts/authContext';
 import { UserRegister } from '../pages/RegisterPage';
 
@@ -36,7 +36,7 @@ export const loginUser = async (email: string, password: string) => {
   }
 };
 
-// e// Method to get user details by email
+//Method to get user details by email
 export const getUserByEmail = async (email: string): Promise<User[]> => {
   try {
     const queryData = query(usersColletionRef, where('email', '==', email));
@@ -64,7 +64,7 @@ export const getUserByEmail = async (email: string): Promise<User[]> => {
     throw error;
   }
 };
-
+//Method to create a User
 export const createUser = async (user: UserRegister) => {
   await addDoc(usersColletionRef, user);
 };
@@ -83,7 +83,7 @@ export const registerUserWithAuth = async (email: string, password: string) => {
   }
 };
 
-//method to register user with firestore in Firebase
+//Method to register user with firestore in Firebase
 export const registerUserWithFirestore = async (
   userId: string,
   user: UserRegister,
@@ -96,13 +96,14 @@ export const registerUserWithFirestore = async (
   }
 };
 
+//Method to upload a profileImage
 export const uploadProfileImage = async (file: File) => {
   try {
     const storageRef = ref(storage, `profileImages/${file.name}`);
     await uploadBytes(storageRef, file);
     const downloadURL = await getDownloadURL(storageRef);
 
-    console.log('Download URL:', downloadURL); // Add this line to debug
+    console.log('Download URL:', downloadURL);
     return downloadURL;
   } catch (error) {
     console.error('Error uploading file:', error);
