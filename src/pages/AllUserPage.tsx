@@ -1,10 +1,9 @@
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
-import { SortBy } from '../components/Commons/SortBy/SortBy';
 import UserList from '../components/Users/UserList';
 import { db } from '../config/firebase';
-import { UserOutput } from '../types/User';
-
+import { UserOrderBy, UserOutput } from '../types/User';
+import { SortBy } from './../components/Commons/SortBy/SortBy';
 const AllUserPage = () => {
   const [users, setUsers] = useState<UserOutput[]>([]);
   const [flatsCount, setFlatsCount] = useState<{ [key: string]: number }>({});
@@ -49,31 +48,12 @@ const AllUserPage = () => {
     fetchUsers();
   }, []);
 
-  const sortUsersByFirstName = (order: 'asc' | 'desc') => {
-    const sortedUsersFirstName = [...users].sort((a, b) => {
-      if (a.firstName < b.firstName) return order === 'asc' ? -1 : 1;
-      if (a.firstName > b.firstName) return order === 'asc' ? 1 : -1;
-      return 0;
-    });
-    setUsers(sortedUsersFirstName);
-  };
-
-  const sortUsersByLastName = (order: 'asc' | 'desc') => {
-    const sortedUsersLastName = [...users].sort((a, b) => {
-      if (a.lastName < b.lastName) return order === 'asc' ? -1 : 1;
-      if (a.lastName > b.lastName) return order === 'asc' ? 1 : -1;
-      return 0;
-    });
-    setUsers(sortedUsersLastName);
-  };
-  const sortUsersByFlatsCount = (order: 'asc' | 'desc') => {
-    const sortedUsersByFlats = [...users].sort((a, b) => {
-      const countA = flatsCount[a.email] || 0;
-      const countB = flatsCount[b.email] || 0;
-      return order === 'asc' ? countA - countB : countB - countA;
-    });
-    setUsers(sortedUsersByFlats);
-  };
+  const sortKeys: Array<keyof UserOrderBy | 'flatsCount'> = [
+    'firstName',
+    'lastName',
+    'flatsCount',
+  ];
+  const sortLabels = ['First Name', 'Last Name', 'Flats Count'];
 
   return (
     <>
@@ -82,14 +62,14 @@ const AllUserPage = () => {
         <div className="flex gap-2">
           <div className="flex align-items-center justify-content-center w-4rem h-4rem font-bold border-round">
             <SortBy
-              sortUsersByFirstName={sortUsersByFirstName}
-              sortUsersByLastName={sortUsersByLastName}
-              sortUsersByFlatsCount={sortUsersByFlatsCount}
+              items={users}
+              setItems={setUsers}
+              keys={sortKeys}
+              labels={sortLabels}
+              flatsCount={flatsCount}
             />
           </div>
-          <div className="flex align-items-center justify-content-center w-4rem h-4rem font-bold border-round">
-            {/* <SortBy sortUsersByFirstName={sortUsersByFirstName} /> */}
-          </div>
+          <div className="flex align-items-center justify-content-center w-4rem h-4rem font-bold border-round"></div>
         </div>
       </div>
 

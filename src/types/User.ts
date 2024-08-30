@@ -7,3 +7,8 @@ export interface UserOutput {
   profile: string;
   isAdmin: boolean;
 }
+export interface UserOrderBy {
+  email: string;
+  firstName: string;
+  lastName: string;
+}

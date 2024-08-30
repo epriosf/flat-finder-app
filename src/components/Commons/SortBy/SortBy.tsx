@@ -1,91 +1,91 @@
 import { Button } from 'primereact/button';
-import { Menu } from 'primereact/menu';
-import { MenuItem } from 'primereact/menuitem';
-import { Toast } from 'primereact/toast';
-import React, { useRef } from 'react';
-type SortByProps = {
-  sortUsersByFirstName: (order: 'asc' | 'desc') => void;
-  sortUsersByLastName: (order: 'asc' | 'desc') => void;
-  sortUsersByFlatsCount: (order: 'asc' | 'desc') => void;
-};
+import { OverlayPanel } from 'primereact/overlaypanel';
+import { SelectButton, SelectButtonChangeEvent } from 'primereact/selectbutton';
+import { useRef, useState } from 'react';
 
-export const SortBy: React.FC<SortByProps> = ({
-  sortUsersByFirstName,
-  sortUsersByLastName,
-  sortUsersByFlatsCount,
-}) => {
-  const menu = useRef<Menu>(null);
-  const toast = useRef<Toast>(null);
-  const items: MenuItem[] = [
-    {
-      label: 'FirstName',
-      icon: 'pi pi-user',
-      items: [
-        {
-          label: 'Asc',
-          icon: 'pi pi-sort-alpha-up',
-          command: () => sortUsersByFirstName('asc'),
-        },
-        {
-          label: 'Desc',
-          icon: 'pi pi-sort-alpha-up-alt',
-          command: () => sortUsersByFirstName('desc'),
-        },
-      ],
-    },
-    {
-      label: 'LastName',
-      icon: 'pi pi-user',
-      items: [
-        {
-          label: 'Asc',
-          icon: 'pi pi-sort-alpha-up',
-          command: () => sortUsersByLastName('asc'),
-        },
-        {
-          label: 'Desc',
-          icon: 'pi pi-sort-alpha-up-alt',
-          command: () => sortUsersByLastName('desc'),
-        },
-      ],
-    },
-    {
-      label: 'No. Flats',
-      icon: 'pi pi-hashtag',
-      items: [
-        {
-          label: 'Asc',
-          icon: 'pi pi-sort-alpha-up',
-          command: () => sortUsersByFlatsCount('asc'),
-        },
-        {
-          label: 'Desc',
-          icon: 'pi pi-sort-alpha-up-alt',
-          command: () => sortUsersByFlatsCount('desc'),
-        },
-      ],
-    },
+interface SortByProps<T> {
+  items: T[];
+  setItems: (items: T[]) => void;
+  keys: Array<keyof T | 'flatsCount'>;
+  labels: string[];
+  flatsCount?: Record<string, number>;
+}
+
+interface JustifyOption {
+  icon: string;
+  value: 'asc' | 'desc';
+}
+export const SortBy = <T extends { email: string }>({
+  items,
+  setItems,
+  keys,
+  labels,
+  flatsCount,
+}: SortByProps<T>) => {
+  const [selectedSortKey, setSelectedSortKey] = useState<
+    keyof T | 'flatsCount' | null
+  >(null);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
+
+  const justifyOptions: JustifyOption[] = [
+    { icon: 'pi pi-sort-amount-down', value: 'asc' },
+    { icon: 'pi pi-sort-amount-up', value: 'desc' },
   ];
 
+  const justifyTemplate = (option: JustifyOption) => {
+    return <i className={option.icon}></i>;
+  };
+
+  const handleSort = (key: keyof T | 'flatsCount', order: 'asc' | 'desc') => {
+    const sortedItems = [...items].sort((a, b) => {
+      if (key === 'flatsCount' && flatsCount) {
+        const countA = flatsCount[a.email] || 0;
+        const countB = flatsCount[b.email] || 0;
+        return order === 'asc' ? countA - countB : countB - countA;
+      }
+
+      const valueA = a[key as keyof T];
+      const valueB = b[key as keyof T];
+
+      if (valueA < valueB) return order === 'asc' ? -1 : 1;
+      if (valueA > valueB) return order === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    setItems(sortedItems);
+  };
+  const op = useRef<OverlayPanel>(null);
   return (
     <div className="card flex justify-content-center">
-      <Toast ref={toast}></Toast>
-      <Menu model={items} popup ref={menu} id="popup_menu_right" />
       <Button
-        icon="pi pi-sort-alt"
+        type="button"
         rounded
-        className="bg-indigo-200"
-        onClick={(event) => menu.current!.toggle(event)}
-        aria-controls="popup_menu_right"
-        aria-haspopup
+        icon="pi pi-sort-alt"
+        onClick={(e) => op.current?.toggle(e)}
       />
-      <Menu
-        model={items}
-        popup
-        ref={menu}
-        id="popup_menu_right"
-        popupAlignment="right"
-      />
+      <OverlayPanel ref={op}>
+        {keys.map((key, index) => (
+          <div key={index}>
+            <p>
+              <i
+                className={`pi pi-${key === 'flatsCount' ? 'hashtag' : 'user'} pr-2`}
+              ></i>
+              {labels[index]}
+            </p>
+            <SelectButton
+              value={selectedSortKey === key ? sortOrder : null}
+              onChange={(e: SelectButtonChangeEvent) => {
+                setSelectedSortKey(key);
+                setSortOrder(e.value as 'asc' | 'desc');
+                handleSort(key, e.value as 'asc' | 'desc');
+              }}
+              itemTemplate={justifyTemplate}
+              optionLabel="value"
+              options={justifyOptions}
+            />
+          </div>
+        ))}
+      </OverlayPanel>
     </div>
   );
 };
