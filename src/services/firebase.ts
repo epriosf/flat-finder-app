@@ -13,6 +13,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
+// import { User } from '../contexts/authContext';
 import { Flat } from '../components/Interfaces/FlatInterface';
 import { User } from '../components/Interfaces/UserInterface';
 import { auth, db, storage } from '../config/firebase';
@@ -39,7 +40,7 @@ export const loginUser = async (email: string, password: string) => {
   }
 };
 
-// Method to get user details by email
+//Method to get user details by email
 export const getUserByEmail = async (email: string): Promise<User[]> => {
   try {
     const queryData = query(usersColletionRef, where('email', '==', email));
@@ -79,7 +80,7 @@ export const registerUserWithAuth = async (email: string, password: string) => {
   }
 };
 
-// Method to register user with firestore in Firebase
+//Method to register user with firestore in Firebase
 export const registerUserWithFirestore = async (
   userId: string,
   user: UserRegister,
@@ -98,6 +99,7 @@ export const uploadProfileImage = async (file: File) => {
     const storageRef = ref(storage, `profileImages/${file.name}`);
     await uploadBytes(storageRef, file);
     const downloadURL = await getDownloadURL(storageRef);
+
     console.log('Download URL:', downloadURL);
     return downloadURL;
   } catch (error) {
