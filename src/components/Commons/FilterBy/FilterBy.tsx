@@ -10,6 +10,7 @@ import { InputSwitch, InputSwitchChangeEvent } from 'primereact/inputswitch';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { useRef, useState } from 'react';
 import { UserOutput } from '../../../types/User';
+import { calculateAge } from '../../Users/UserList';
 
 interface FilterByProps<T> {
   setItems: (items: T[]) => void;
@@ -46,9 +47,15 @@ const FilterBy = <T extends UserOutput>({
     e.preventDefault();
     let filteredUsers = [...originalItems];
 
-    if (isAdmin) {
-      filteredUsers = filteredUsers.filter((item: UserOutput) => item.isAdmin);
+    if (minAge != null || maxAge != null) {
+      filteredUsers = filteredUsers.filter((item: UserOutput) => {
+        const age = calculateAge(new Date(item.birthday));
+        return (
+          (minAge == null || age >= minAge) && (maxAge == null || age <= maxAge)
+        );
+      });
     }
+
     if (flatsCount) {
       if (minRange != null) {
         filteredUsers = filteredUsers.filter(
@@ -60,6 +67,9 @@ const FilterBy = <T extends UserOutput>({
           (item: UserOutput) => flatsCount[item.email] <= maxRange,
         );
       }
+    }
+    if (isAdmin) {
+      filteredUsers = filteredUsers.filter((item: UserOutput) => item.isAdmin);
     }
 
     setItems(filteredUsers);
