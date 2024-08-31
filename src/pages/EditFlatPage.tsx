@@ -1,5 +1,16 @@
-const EditFlatPage = () => {
-  return <div>EditFlatPage</div>;
+import FlatForm from '../components/Flats/FlatForm';
+import { Flat } from '../components/Interfaces/FlatInterface';
+
+interface Props {
+  flat?: Flat;
+}
+const EditFlatPage = ({ flat }: Props) => {
+  return (
+    <>
+      <h1 className="font-normal">Edit Flat</h1>
+      <FlatForm flat={flat} />
+    </>
+  );
 };
 
 export default EditFlatPage;
@@ -12,7 +23,8 @@ export default EditFlatPage;
 // import { Dialog } from 'primereact/dialog';
 
 // interface EditFlatPageProps {
-//   flat: Flat;
+//   flat: Flat | undefined;
+//   method: 'upd'
 //   onClose: () => void;
 // }
 
@@ -62,7 +74,7 @@ export default EditFlatPage;
 //           <label htmlFor="streetName">Street Name</label>
 //           <InputText
 //             id="streetName"
-//             value={updatedFlat.streetName}
+//             value={flat.streetName}
 //             onChange={(e) =>
 //               setUpdatedFlat({ ...updatedFlat, streetName: e.target.value })
 //             }

@@ -45,6 +45,11 @@
 #header {
   z-index: 900;
 }
+
+#yearBuilt input,
+#dateAvailable input {
+  padding-left: 3rem;
+}
 /* Login Register */
 
 .p-tabview .p-tabview-nav,
@@ -103,7 +108,9 @@
 }
 
 #loginForm .p-inline-message.p-inline-message-error .p-inline-message-icon,
-#registerForm.p-inline-message.p-inline-message-error .p-inline-message-icon {
+#registerForm.p-inline-message.p-inline-message-error .p-inline-message-icon,
+#error-message .p-inline-message-icon,
+.p-inline-message.p-inline-message-error .p-inline-message-icon {
   color: var(--pink-300);
 }
 
@@ -154,4 +161,24 @@ li.p-tabmenuitem.p-highlight {
   background-color: var(--primary-100); /* Green for Yes */
   border: 1px solid var(--primary-300);
   opacity: 0.7;
+}
+
+.p-dialog-header {
+  color: var(--primary-500);
+}
+
+#newFlatForm .p-float-label {
+  width: 100%;
+}
+
+/* New Flat */
+#newFlatImg img {
+  position: fixed;
+  width: 46%;
+  top: 0;
+  left: 0;
+}
+
+.p-fileupload-file-badge.p-badge {
+  display: none !important;
 }

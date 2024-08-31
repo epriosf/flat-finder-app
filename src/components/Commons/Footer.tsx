@@ -3,7 +3,7 @@ const Footer = () => {
     <>
       <footer
         id="footer"
-        className="footer bg-indigo-100 px-4 w-full justify-content-between flex-column flex align-items-center sm:flex-row"
+        className="footer z-5 bg-indigo-100 px-4 w-full justify-content-between flex-column flex align-items-center sm:flex-row"
       >
         <h4 className="text-600 w-max">
           © Copyright 2024. All rights reserved.

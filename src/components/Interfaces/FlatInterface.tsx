@@ -3,18 +3,18 @@ import { Timestamp } from 'firebase/firestore';
 
 // components/Interfaces/FlatInterface.tsx
 export interface Flat {
-  id: string;
-  areaSize: number;
+  id?: string;
+  areaSize: number | null;
   city: string;
-  dateAvailable: Timestamp | Date; // Consider using Date type if possible
+  dateAvailable: Timestamp | Date | null;
   hasAc: boolean;
-  price: number;
+  price: number | null;
   streetName: string;
-  streetNumber: number;
-  yearBuilt: number;
+  streetNumber: number | null;
+  yearBuilt: number | null;
   flatImage: string;
   //   creator: string; // This will be the ID of the creator from FlatUser
   flatUser: string;
-  rooms: number;
-  bathrooms: number;
+  rooms: number | null;
+  bathrooms: number | null;
 }

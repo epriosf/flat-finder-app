@@ -36,7 +36,9 @@ const FlatItem = ({ flat }: { flat: Flat }) => {
     return formatter.format(dateObj);
   };
 
-  const formattedDate = formatDate(flat.dateAvailable);
+  const formattedDate = flat.dateAvailable
+    ? formatDate(flat.dateAvailable)
+    : 'N/A';
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -72,7 +74,6 @@ const FlatItem = ({ flat }: { flat: Flat }) => {
   }
 
   const header = (
-    // <img alt={`${flat.streetNumber} ${flat.streetName}`} src={flat.flatImage} />
     <img
       alt={`${flat.streetNumber} ${flat.streetName}`}
       src={
@@ -125,10 +126,14 @@ const FlatItem = ({ flat }: { flat: Flat }) => {
       >
         <div className="flex flex-column gap-1 mb-3 pt-2">
           <p className="text-lg font-bold p-0 m-0">Price: ${flat.price}</p>
-          <p className="p-0 m-0 text-600">Built on {flat.yearBuilt}</p>
+          {/* <p className="p-0 m-0 text-600">Built on {flat.yearBuilt}</p> */}
+          <p className="p-0 m-0 text-600">
+            Built on {flat.yearBuilt ? flat.yearBuilt : 'N/A'}
+          </p>
+
           <div className="flex gap-2">
             <p className="p-0 m-0 text-600">{flat.areaSize} m²</p>
-            <p className="p-0 m-0 text-600">{flat.rooms} room.</p>
+            <p className="p-0 m-0 text-600">{flat.rooms} rooms</p>
             <p className="p-0 m-0 text-600">{flat.bathrooms} baths</p>
           </div>
         </div>
@@ -166,8 +171,7 @@ const FlatItem = ({ flat }: { flat: Flat }) => {
         style={{ width: '50vw' }}
         onHide={handleDialogClose}
       >
-        <EditFlatPage />
-        {/* <EditFlatPage flat={flat} onClose={handleDialogClose} /> */}
+        <EditFlatPage flat={flat} />
       </Dialog>
     </>
   );
