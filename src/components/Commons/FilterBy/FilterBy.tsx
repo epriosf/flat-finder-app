@@ -45,32 +45,19 @@ const FilterBy = <T extends UserOutput>({
   };
   const handleButtonClick = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    let filteredUsers = [...originalItems];
+    let filteredUsers = originalItems.filter((item: UserOutput) => {
+      const age = calculateAge(new Date(item.birthday));
 
-    if (minAge != null || maxAge != null) {
-      filteredUsers = filteredUsers.filter((item: UserOutput) => {
-        const age = calculateAge(new Date(item.birthday));
-        return (
-          (minAge == null || age >= minAge) && (maxAge == null || age <= maxAge)
-        );
-      });
-    }
+      const ageCondition =
+        (minAge == null || age >= minAge) && (maxAge == null || age <= maxAge);
+      const rangeCondition = flatsCount
+        ? (minRange == null || flatsCount[item.email] >= minRange) &&
+          (maxRange == null || flatsCount[item.email] <= maxRange)
+        : true;
+      const adminCondition = isAdmin ? item.isAdmin : !item.isAdmin;
 
-    if (flatsCount) {
-      if (minRange != null) {
-        filteredUsers = filteredUsers.filter(
-          (item: UserOutput) => flatsCount[item.email] >= minRange,
-        );
-      }
-      if (maxRange) {
-        filteredUsers = filteredUsers.filter(
-          (item: UserOutput) => flatsCount[item.email] <= maxRange,
-        );
-      }
-    }
-    if (isAdmin) {
-      filteredUsers = filteredUsers.filter((item: UserOutput) => item.isAdmin);
-    }
+      return ageCondition && rangeCondition && adminCondition;
+    });
 
     setItems(filteredUsers);
 
