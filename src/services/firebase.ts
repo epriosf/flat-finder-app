@@ -13,11 +13,11 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { Flat } from '../components/Interfaces/FlatInterface';
 import { User } from '../components/Interfaces/UserInterface';
 import { auth, db, storage } from '../config/firebase';
 import { UserRegister } from '../pages/RegisterPage';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 const collectionName = 'users';
 const usersColletionRef = collection(db, collectionName);
