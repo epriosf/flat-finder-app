@@ -20,6 +20,7 @@ import GeneralInput from '../Commons/Inputs/GeneralInput';
 import { createFlat, uploadFlatImage } from '../../services/firebase';
 import { Flat } from '../Interfaces/FlatInterface';
 import { useAuth } from '../../hooks/useAuth';
+import { Image } from 'primereact/image';
 
 const today = new Date();
 // const todayYear = new Date().getFullYear();
@@ -374,6 +375,16 @@ const FlatForm = ({ flat }: Props) => {
             error={formik.errors.hasAc}
           />
         </div>
+
+        {/* Image */}
+        {flat?.flatImage && (
+          <Image
+            src={flat?.flatImage}
+            alt={flat?.streetNumber + ' ' + flat?.streetName}
+            className="flat-img-form object-cover "
+            width="150"
+          />
+        )}
 
         <FileUpload
           name="demo[]"

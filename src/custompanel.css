@@ -182,3 +182,7 @@ li.p-tabmenuitem.p-highlight {
 .p-fileupload-file-badge.p-badge {
   display: none !important;
 }
+
+.flat-img-form img {
+  border-radius: 0.375rem;
+}
