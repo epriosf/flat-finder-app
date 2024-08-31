@@ -1,11 +1,11 @@
-import { useAuth } from '../hooks/useAuth';
+import FlatList from '../components/Flats/FlatList';
+import FlatTitle from '../components/Flats/FlatTitle';
 
 const HomePage = () => {
-  const { user } = useAuth();
   return (
     <>
-      <h1>Home Page</h1>
-      <p>{user?.email}</p>
+      <FlatTitle title="Home" />
+      <FlatList />
     </>
   );
 };

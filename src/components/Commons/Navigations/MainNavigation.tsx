@@ -16,7 +16,7 @@ const MainNavigation = ({ setVisible }: MainNavigationProps) => {
   const handleLogout = () => {
     logoutUser();
     setVisible(false);
-    navigate('/home/favorites');
+    navigate('/login');
   };
 
   const handleVisible = () => {
