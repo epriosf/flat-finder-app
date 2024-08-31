@@ -13,7 +13,6 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-// import { User } from '../contexts/authContext';
 import { Flat } from '../components/Interfaces/FlatInterface';
 import { User } from '../components/Interfaces/UserInterface';
 import { auth, db, storage } from '../config/firebase';
@@ -99,7 +98,6 @@ export const uploadProfileImage = async (file: File) => {
     const storageRef = ref(storage, `profileImages/${file.name}`);
     await uploadBytes(storageRef, file);
     const downloadURL = await getDownloadURL(storageRef);
-
     console.log('Download URL:', downloadURL);
     return downloadURL;
   } catch (error) {
