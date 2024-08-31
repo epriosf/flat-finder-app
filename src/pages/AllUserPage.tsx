@@ -1,11 +1,13 @@
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
+import FilterBy from '../components/Commons/FilterBy/FilterBy';
 import UserList from '../components/Users/UserList';
 import { db } from '../config/firebase';
 import { UserOrderBy, UserOutput } from '../types/User';
 import { SortBy } from './../components/Commons/SortBy/SortBy';
 const AllUserPage = () => {
   const [users, setUsers] = useState<UserOutput[]>([]);
+  const [originalUsers, setOriginalUsers] = useState<UserOutput[]>([]);
   const [flatsCount, setFlatsCount] = useState<{ [key: string]: number }>({});
 
   useEffect(() => {
@@ -26,6 +28,7 @@ const AllUserPage = () => {
           } as UserOutput;
         });
         setUsers(usersList);
+        setOriginalUsers(usersList);
 
         // Fetch flats count for each user
         const flatsCountObj: { [key: string]: number } = {};
@@ -69,7 +72,13 @@ const AllUserPage = () => {
               flatsCount={flatsCount}
             />
           </div>
-          <div className="flex align-items-center justify-content-center w-4rem h-4rem font-bold border-round"></div>
+          <div className="flex align-items-center justify-content-center w-4rem h-4rem font-bold border-round">
+            <FilterBy
+              setItems={setUsers}
+              originalItems={originalUsers}
+              flatsCount={flatsCount}
+            />
+          </div>
         </div>
       </div>
 
