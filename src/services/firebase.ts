@@ -23,13 +23,7 @@ const collectionName = 'users';
 const usersColletionRef = collection(db, collectionName);
 const flatsCollection = collection(db, 'flats');
 
-// export interface FlatUser {
-//   firstName: string;
-//   lastName: string;
-//   profile: string;
-//   email: string;
-// }
-//Method to login a User
+// Method to login a User
 export const loginUser = async (email: string, password: string) => {
   try {
     const userCredential = await signInWithEmailAndPassword(
@@ -52,11 +46,10 @@ export const getUserByEmail = async (email: string): Promise<User[]> => {
     const querySnapshot = await getDocs(queryData);
 
     const users = querySnapshot.docs.map((doc) => {
-      const data = doc.data() as User; // Ensure it matches User
-
+      const data = doc.data() as User;
       return {
         ...data,
-        profile: data.profile || '', // Ensure profile is included
+        profile: data.profile || '',
       };
     });
 
@@ -70,7 +63,8 @@ export const getUserByEmail = async (email: string): Promise<User[]> => {
 export const createUser = async (user: UserRegister) => {
   await addDoc(usersColletionRef, user);
 };
-//Method to regsister auth user in Firebase
+
+// Method to register auth user in Firebase
 export const registerUserWithAuth = async (email: string, password: string) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(
@@ -112,10 +106,19 @@ export const uploadProfileImage = async (file: File) => {
     throw error;
   }
 };
-// The `getFlats` function should return data matching the `Flat` interface
-export const getFlats = async (): Promise<Flat[]> => {
-  const flatsSnapshot = await getDocs(flatsCollection);
-  return flatsSnapshot.docs.map((doc) => doc.data() as Flat); // Type assertion to Flat
+
+// Method to create a new flat
+export const createFlat = async (flat: Omit<Flat, 'id'>) => {
+  try {
+    // Add the flat document to Firestore
+    const docRef = await addDoc(flatsCollection, flat);
+    // Return the newly created document's ID
+    return docRef.id;
+  } catch (error) {
+    console.error('Error creating flat:', error);
+    throw error;
+  }
+
 };
 
 export const uploadFlatImage = async (file: File) => {
@@ -123,13 +126,17 @@ export const uploadFlatImage = async (file: File) => {
     const storageRefFlats = ref(storage, `flatImages/${file.name}`);
     await uploadBytes(storageRefFlats, file);
     const downloadURL = await getDownloadURL(storageRefFlats);
-
-    console.log('Download URL:', downloadURL); // Add this line to debug
+    console.log('Download URL:', downloadURL);
     return downloadURL;
   } catch (error) {
     console.error('Error uploading file:', error);
     throw error;
   }
+};
+
+export const getFlats = async (): Promise<Flat[]> => {
+  const flatsSnapshot = await getDocs(flatsCollection);
+  return flatsSnapshot.docs.map((doc) => doc.data() as Flat);
 };
 
 export const getFlatsByOwner = async (ownerEmail: string): Promise<Flat[]> => {
@@ -222,9 +229,14 @@ export const getFlatById = async (flatId: string): Promise<Flat | null> => {
 
 export const updateFlat = async (flat: Flat) => {
   try {
-    const { id, ...flatData } = flat; // Exclude id from the data
+    const { id, ...flatData } = flat;
+
+    if (!id) {
+      throw new Error('Flat ID is missing.');
+    }
+
     const flatRef = doc(db, 'flats', id);
-    await updateDoc(flatRef, flatData); // Pass only the flat data to updateDoc
+    await updateDoc(flatRef, flatData);
   } catch (error) {
     console.error('Error updating flat:', error);
     throw error;

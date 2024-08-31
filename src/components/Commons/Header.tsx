@@ -21,7 +21,7 @@ const Header = () => {
         className="header flex w-full bg-indigo-900 text-white p-3 justify-content-between fixed"
       >
         <div className="flex gap-3 align-items-center">
-          <a href="home.html">
+          <a href="/home">
             <Image src={LogoWhite} alt="Image" width="115" />
           </a>
           <p>Hello {user?.firstName}!</p>

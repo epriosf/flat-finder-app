@@ -76,6 +76,7 @@ const MainNavigation = ({ setVisible }: MainNavigationProps) => {
               >
                 New Flat
               </NavLink>
+
               <Ripple />
             </div>
           </li>
