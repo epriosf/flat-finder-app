@@ -2,22 +2,22 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import { auth, db, storage } from '../config/firebase';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import {
-  collection,
-  getDocs,
-  query,
-  where,
-  setDoc,
   addDoc,
+  collection,
   doc,
   getDoc,
+  getDocs,
+  query,
+  setDoc,
   updateDoc,
+  where,
 } from 'firebase/firestore';
-import { UserRegister } from '../pages/RegisterPage';
 import { Flat } from '../components/Interfaces/FlatInterface';
 import { User } from '../components/Interfaces/UserInterface';
+import { auth, db, storage } from '../config/firebase';
+import { UserRegister } from '../pages/RegisterPage';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 const collectionName = 'users';
 const usersColletionRef = collection(db, collectionName);
@@ -59,7 +59,7 @@ export const getUserByEmail = async (email: string): Promise<User[]> => {
     throw error;
   }
 };
-
+//Method to create a User
 export const createUser = async (user: UserRegister) => {
   await addDoc(usersColletionRef, user);
 };
@@ -92,6 +92,7 @@ export const registerUserWithFirestore = async (
   }
 };
 
+//Method to upload a profileImage
 export const uploadProfileImage = async (file: File) => {
   try {
     const storageRef = ref(storage, `profileImages/${file.name}`);
@@ -227,6 +228,11 @@ export const getFlatById = async (flatId: string): Promise<Flat | null> => {
 export const updateFlat = async (flat: Flat) => {
   try {
     const { id, ...flatData } = flat;
+
+    if (!id) {
+      throw new Error('Flat ID is missing.');
+    }
+
     const flatRef = doc(db, 'flats', id);
     await updateDoc(flatRef, flatData);
   } catch (error) {

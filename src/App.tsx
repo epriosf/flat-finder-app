@@ -1,5 +1,9 @@
 import { lazy, Suspense } from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from 'react-router-dom';
 import './custompanel.css';
 import ErrorPage from './pages/ErrorPage';
 import LoginRegister from './pages/LoginRegisterPage';
@@ -29,6 +33,10 @@ const router = createBrowserRouter([
     ),
     errorElement: <ErrorPage />,
     children: [
+      {
+        path: '',
+        element: <Navigate to="/login" replace />,
+      },
       {
         path: 'login',
         element: (
