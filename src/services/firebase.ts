@@ -2,24 +2,22 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import { auth, db, storage } from '../config/firebase';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import {
-  collection,
-  // DocumentData,
-  getDocs,
-  query,
-  where,
-  setDoc,
   addDoc,
+  collection,
   doc,
   getDoc,
+  getDocs,
+  query,
+  setDoc,
   updateDoc,
+  where,
 } from 'firebase/firestore';
-// import { User } from '../contexts/authContext';
-import { UserRegister } from '../pages/RegisterPage';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { Flat } from '../components/Interfaces/FlatInterface';
 import { User } from '../components/Interfaces/UserInterface';
+import { auth, db, storage } from '../config/firebase';
+import { UserRegister } from '../pages/RegisterPage';
 
 const collectionName = 'users';
 const usersColletionRef = collection(db, collectionName);
@@ -47,35 +45,7 @@ export const loginUser = async (email: string, password: string) => {
   }
 };
 
-// e// Method to get user details by email
-// export const getUserByEmail = async (email: string): Promise<User[]> => {
-//   try {
-//     const queryData = query(usersColletionRef, where('email', '==', email));
-//     const querySnapshot = await getDocs(queryData);
-
-//     // Convert Firestore data to the User type
-//     const users = querySnapshot.docs.map((doc) => {
-//       const data = doc.data() as DocumentData;
-
-//       return {
-//         id: doc.id,
-//         email: data.email,
-//         firstName: data.firstName,
-//         lastName: data.lastName,
-//         birthday: data.birthday,
-//         role: data.role,
-//         profileImage: data.profileImage,
-//         isAdmin: data.isAdmin,
-//       } as User;
-//     });
-
-//     return users;
-//   } catch (error) {
-//     console.error('Error fetching user by email:', error);
-//     throw error;
-//   }
-// };
-
+//Method to get user details by email
 export const getUserByEmail = async (email: string): Promise<User[]> => {
   try {
     const queryData = query(usersColletionRef, where('email', '==', email));
@@ -96,7 +66,7 @@ export const getUserByEmail = async (email: string): Promise<User[]> => {
     throw error;
   }
 };
-
+//Method to create a User
 export const createUser = async (user: UserRegister) => {
   await addDoc(usersColletionRef, user);
 };
@@ -115,7 +85,7 @@ export const registerUserWithAuth = async (email: string, password: string) => {
   }
 };
 
-//method to register user with firestore in Firebase
+//Method to register user with firestore in Firebase
 export const registerUserWithFirestore = async (
   userId: string,
   user: UserRegister,
@@ -128,20 +98,20 @@ export const registerUserWithFirestore = async (
   }
 };
 
+//Method to upload a profileImage
 export const uploadProfileImage = async (file: File) => {
   try {
     const storageRef = ref(storage, `profileImages/${file.name}`);
     await uploadBytes(storageRef, file);
     const downloadURL = await getDownloadURL(storageRef);
 
-    console.log('Download URL:', downloadURL); // Add this line to debug
+    console.log('Download URL:', downloadURL);
     return downloadURL;
   } catch (error) {
     console.error('Error uploading file:', error);
     throw error;
   }
 };
-
 // The `getFlats` function should return data matching the `Flat` interface
 export const getFlats = async (): Promise<Flat[]> => {
   const flatsSnapshot = await getDocs(flatsCollection);

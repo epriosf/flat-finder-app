@@ -1,7 +1,6 @@
 import { MenuItem } from 'primereact/menuitem';
 import { TabMenu } from 'primereact/tabmenu';
 import { NavLink } from 'react-router-dom';
-import './LoginRegisterNavigation.css';
 const LoginRegisterNavigation = () => {
   const items: MenuItem[] = [
     {
