@@ -118,7 +118,6 @@ export const createFlat = async (flat: Omit<Flat, 'id'>) => {
     console.error('Error creating flat:', error);
     throw error;
   }
-
 };
 
 export const uploadFlatImage = async (file: File) => {
