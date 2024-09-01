@@ -1,29 +1,24 @@
-import { useEffect, useState } from 'react';
+import { Timestamp } from 'firebase/firestore';
 import { useFormik } from 'formik';
 import { Button } from 'primereact/button';
-import { Message } from 'primereact/message';
-import { useNavigate } from 'react-router-dom';
-import * as Yup from 'yup';
-// import GeneralInput from '../components/Commons/Inputs/GeneralInput';
-// import { Flat } from '../components/Interfaces/FlatInterface';
-// import { uploadFlatImage, createFlat } from '../services/firebase';
-// import FormErrorMessage from '../components/Commons/Inputs/MessageErrors';
-import { InputSwitch, InputSwitchChangeEvent } from 'primereact/inputswitch';
-import { FileUpload, FileUploadHandlerEvent } from 'primereact/fileupload';
 import { Calendar } from 'primereact/calendar';
+import { FileUpload, FileUploadHandlerEvent } from 'primereact/fileupload';
 import { FloatLabel } from 'primereact/floatlabel';
 import { IconField } from 'primereact/iconfield';
-import { InputIcon } from 'primereact/inputicon';
-import { Timestamp } from 'firebase/firestore';
-import FormErrorMessage from '../Commons/Inputs/MessageErrors';
-import GeneralInput from '../Commons/Inputs/GeneralInput';
-import { createFlat, uploadFlatImage } from '../../services/firebase';
-import { Flat } from '../Interfaces/FlatInterface';
-import { useAuth } from '../../hooks/useAuth';
 import { Image } from 'primereact/image';
+import { InputIcon } from 'primereact/inputicon';
+import { InputSwitch, InputSwitchChangeEvent } from 'primereact/inputswitch';
+import { Message } from 'primereact/message';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import * as Yup from 'yup';
+import { useAuth } from '../../hooks/useAuth';
+import { createFlat, uploadFlatImage } from '../../services/firebase';
+import GeneralInput from '../Commons/Inputs/GeneralInput';
+import FormErrorMessage from '../Commons/Inputs/MessageErrors';
+import { Flat } from '../Interfaces/FlatInterface';
 
 const today = new Date();
-// const todayYear = new Date().getFullYear();
 let minDate = new Date(today);
 let maxDate = new Date(today);
 const currentYear = new Date().getFullYear();
@@ -36,7 +31,6 @@ maxDate.setFullYear(today.getFullYear() + 2);
 const FlatSchema = Yup.object({
   areaSize: Yup.number().nullable().required('Area Size Required'),
   city: Yup.string().required('City Required'),
-  // dateAvailable: Yup.date().required('Date Available Required'),
   dateAvailable: Yup.date()
     .required('Date Available Required')
     .min(minDate, 'Date needs to be in the future')
@@ -53,6 +47,7 @@ const FlatSchema = Yup.object({
   rooms: Yup.number().nullable().required('Rooms Required'),
   bathrooms: Yup.number().nullable().required('Bathrooms Required'),
 });
+
 interface Props {
   flat?: Flat;
 }
@@ -163,9 +158,9 @@ const FlatForm = ({ flat }: Props) => {
           />
         )}
         {/* Street Name and Street Number */}
-        <div className="flex gap-3 w-full md:flex-row flex-column">
-          {/* City */}
-          <div>
+        <div className="flex gap-3 w-full flex-column md:flex-row">
+          {/* Street Number */}
+          <div className="flex-1">
             <GeneralInput
               id="streetNumber"
               name="streetNumber"
@@ -173,23 +168,24 @@ const FlatForm = ({ flat }: Props) => {
               onChange={formik.handleChange}
               iconClass="pi pi-hashtag text-500"
               label="Street Number"
-              type="number"
+              type="text" // Specify the type if it's expected to be text
             />
             <FormErrorMessage
               touched={formik.touched.streetNumber}
               error={formik.errors.streetNumber}
             />
           </div>
+
           {/* Street Name */}
-          <div>
+          <div className="flex-1">
             <GeneralInput
               id="streetName"
               name="streetName"
               value={formik.values.streetName}
               onChange={formik.handleChange}
-              type="text"
               iconClass="pi pi-user text-500"
               label="Street Name"
+              type="text" // Specify the type if it's expected to be text
             />
             <FormErrorMessage
               touched={formik.touched.streetName}
@@ -201,7 +197,7 @@ const FlatForm = ({ flat }: Props) => {
         {/* Area & City */}
         <div className="flex gap-3 w-full md:flex-row flex-column">
           {/* City */}
-          <div>
+          <div className="flex-1">
             <GeneralInput
               id="city"
               name="city"
@@ -217,13 +213,12 @@ const FlatForm = ({ flat }: Props) => {
           </div>
 
           {/* Price */}
-          <div>
+          <div className="flex-1">
             <GeneralInput
               id="price"
               name="price"
               value={formik.values.price ?? ''}
               onChange={formik.handleChange}
-              type="number"
               iconClass="pi pi-dollar text-500"
               label="Price"
             />
@@ -237,7 +232,7 @@ const FlatForm = ({ flat }: Props) => {
         {/* Rooms & Bathrooms */}
         <div className="flex gap-3 w-full md:flex-row flex-column">
           {/* Rooms */}
-          <div>
+          <div className="flex-1">
             <GeneralInput
               id="rooms"
               name="rooms"
@@ -253,13 +248,12 @@ const FlatForm = ({ flat }: Props) => {
           </div>
 
           {/* Bathrooms */}
-          <div>
+          <div className="flex-1">
             <GeneralInput
               id="bathrooms"
               name="bathrooms"
               value={formik.values.bathrooms ?? ''}
               onChange={formik.handleChange}
-              type="number"
               iconClass="pi pi-building text-500"
               label="Bathrooms"
             />
@@ -273,7 +267,7 @@ const FlatForm = ({ flat }: Props) => {
         {/* Year & Date Available */}
         <div className="flex gap-3 w-full md:flex-row flex-column">
           {/* Year */}
-          <div>
+          <div className="flex-1">
             <FloatLabel>
               <IconField iconPosition="left">
                 <InputIcon className="pi pi-calendar text-500"> </InputIcon>
@@ -298,6 +292,7 @@ const FlatForm = ({ flat }: Props) => {
                   minDate={minYearDate} // Limit to years after 1900
                   maxDate={maxYearDate} // Limit to the current year
                   yearNavigator // Enables a dropdown for selecting the year
+                  className="w-full"
                 />
               </IconField>
               <label htmlFor="yearBuilt" className="left-3 text-400">
@@ -311,7 +306,7 @@ const FlatForm = ({ flat }: Props) => {
           </div>
 
           {/* Date Available */}
-          <div>
+          <div className="flex-1">
             <FloatLabel>
               <IconField iconPosition="left">
                 <InputIcon className="pi pi-calendar text-500"> </InputIcon>
@@ -327,6 +322,7 @@ const FlatForm = ({ flat }: Props) => {
                   minDate={minDate}
                   maxDate={maxDate}
                   dateFormat="dd/mm/yy"
+                  className="w-full"
                 />
               </IconField>
               <label htmlFor="dateAvailable" className="left-3 text-400">
@@ -349,7 +345,6 @@ const FlatForm = ({ flat }: Props) => {
               name="areaSize"
               value={formik.values.areaSize ?? ''}
               onChange={formik.handleChange}
-              type="number"
               iconClass="pi pi-expand text-500"
               label="Area Size"
             />
