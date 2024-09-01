@@ -1,19 +1,22 @@
 // components/Flats/FlatList.tsx
-import { useEffect, useState } from 'react';
-import { getFlats } from '../../services/firebase';
+// import { useEffect, useState } from 'react';
+// import { getFlats } from '../../services/firebase';
 import FlatItem from './FlatItem';
 import { Flat } from '../Interfaces/FlatInterface'; // Updated import
 
-const FlatList = () => {
-  const [flats, setFlats] = useState<Flat[]>([]);
+interface FlatListProps {
+  flats: Flat[];
+}
+const FlatList: React.FC<FlatListProps> = ({ flats }) => {
+  // const [flats, setFlats] = useState<Flat[]>([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await getFlats();
-      setFlats(data as Flat[]);
-    };
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const data = await getFlats();
+  //     setFlats(data as Flat[]);
+  //   };
+  //   fetchData();
+  // }, []);
 
   return (
     <div className="grid">

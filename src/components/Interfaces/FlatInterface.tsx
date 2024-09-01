@@ -3,7 +3,7 @@ import { Timestamp } from 'firebase/firestore';
 
 // components/Interfaces/FlatInterface.tsx
 export interface Flat {
-  id?: string;
+  flatId: string;
   areaSize: number | null;
   city: string;
   dateAvailable: Timestamp | Date | null;
