@@ -16,7 +16,7 @@ const LoginPage = lazy(() => import('./pages/LoginPage'));
 const FavouritePage = lazy(() => import('./pages/FavouritesPage'));
 const AllUserPage = lazy(() => import('./pages/AllUserPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
-const EditFlatPage = lazy(() => import('./pages/EditFlatPage'));
+// const EditFlatPage = lazy(() => import('./pages/EditFlatPage'));
 const MyFlatsPage = lazy(() => import('./pages/MyFlatsPage'));
 const NewFlatPage = lazy(() => import('./pages/NewFlatPage'));
 const RegisterPage = lazy(() => import('./pages/RegisterPage'));
@@ -89,14 +89,14 @@ const router = createBrowserRouter([
           </Suspense>
         ),
       },
-      {
-        path: 'edit-flat',
-        element: (
-          <Suspense fallback={<div>Loading...</div>}>
-            <EditFlatPage />
-          </Suspense>
-        ),
-      },
+      // {
+      //   path: 'edit-flat',
+      //   element: (
+      //     <Suspense fallback={<div>Loading...</div>}>
+      //       <EditFlatPage flat={null} />
+      //     </Suspense>
+      //   ),
+      // },
       {
         path: 'profile',
         element: (

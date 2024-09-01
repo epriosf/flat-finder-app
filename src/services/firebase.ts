@@ -108,12 +108,23 @@ export const uploadProfileImage = async (file: File) => {
 };
 
 // Method to create a new flat
-export const createFlat = async (flat: Omit<Flat, 'id'>) => {
+export const createFlat = async (
+  flat: Omit<Flat, 'flatId'>,
+): Promise<string> => {
   try {
     // Add the flat document to Firestore
     const docRef = await addDoc(flatsCollection, flat);
-    // Return the newly created document's ID
-    return docRef.id;
+
+    // Get the newly created flat's ID
+    const flatId = docRef.id;
+
+    // Update the flat document to include the flatId
+    await updateDoc(doc(db, 'flats', flatId), {
+      flatId: flatId,
+    });
+
+    // Return the newly created flat's ID
+    return flatId;
   } catch (error) {
     console.error('Error creating flat:', error);
     throw error;
@@ -146,7 +157,7 @@ export const getFlatsByOwner = async (ownerEmail: string): Promise<Flat[]> => {
     return flatsSnapshot.docs.map((doc) => {
       const data = doc.data();
       return {
-        id: doc.id,
+        flatId: doc.id, // Use flatId instead of id
         areaSize: data.areaSize,
         city: data.city,
         dateAvailable: data.dateAvailable.toDate(),
@@ -167,34 +178,34 @@ export const getFlatsByOwner = async (ownerEmail: string): Promise<Flat[]> => {
   }
 };
 
-export const getFlatsByUserId = async (userEmail: string): Promise<Flat[]> => {
-  try {
-    const flatsSnapshot = await getDocs(
-      query(flatsCollection, where('flatUser', '==', userEmail)),
-    );
-    return flatsSnapshot.docs.map((doc) => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        areaSize: data.areaSize,
-        city: data.city,
-        dateAvailable: data.dateAvailable.toDate(),
-        hasAc: data.hasAc,
-        price: data.price,
-        streetName: data.streetName,
-        streetNumber: data.streetNumber,
-        yearBuilt: data.yearBuilt,
-        flatImage: data.flatImage,
-        flatUser: data.flatUser,
-        rooms: data.rooms,
-        bathrooms: data.bathrooms,
-      } as Flat;
-    });
-  } catch (error) {
-    console.error('Error fetching flats by user email:', error);
-    throw error;
-  }
-};
+// export const getFlatsByUserId = async (userEmail: string): Promise<Flat[]> => {
+//   try {
+//     const flatsSnapshot = await getDocs(
+//       query(flatsCollection, where('flatUser', '==', userEmail)),
+//     );
+//     return flatsSnapshot.docs.map((doc) => {
+//       const data = doc.data();
+//       return {
+//         id: doc.id,
+//         areaSize: data.areaSize,
+//         city: data.city,
+//         dateAvailable: data.dateAvailable.toDate(),
+//         hasAc: data.hasAc,
+//         price: data.price,
+//         streetName: data.streetName,
+//         streetNumber: data.streetNumber,
+//         yearBuilt: data.yearBuilt,
+//         flatImage: data.flatImage,
+//         flatUser: data.flatUser,
+//         rooms: data.rooms,
+//         bathrooms: data.bathrooms,
+//       } as Flat;
+//     });
+//   } catch (error) {
+//     console.error('Error fetching flats by user email:', error);
+//     throw error;
+//   }
+// };
 
 export const getFlatById = async (flatId: string): Promise<Flat | null> => {
   try {
@@ -202,7 +213,7 @@ export const getFlatById = async (flatId: string): Promise<Flat | null> => {
     if (flatDoc.exists()) {
       const data = flatDoc.data();
       return {
-        id: flatDoc.id,
+        flatId: flatDoc.id, // Use flatId instead of id
         areaSize: data.areaSize,
         city: data.city,
         dateAvailable: data.dateAvailable.toDate(),
@@ -228,13 +239,13 @@ export const getFlatById = async (flatId: string): Promise<Flat | null> => {
 
 export const updateFlat = async (flat: Flat) => {
   try {
-    const { id, ...flatData } = flat;
+    const { flatId, ...flatData } = flat;
 
-    if (!id) {
+    if (!flatId) {
       throw new Error('Flat ID is missing.');
     }
 
-    const flatRef = doc(db, 'flats', id);
+    const flatRef = doc(db, 'flats', flatId);
     await updateDoc(flatRef, flatData);
   } catch (error) {
     console.error('Error updating flat:', error);

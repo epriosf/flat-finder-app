@@ -9,7 +9,9 @@ import { Flat } from '../Interfaces/FlatInterface'; // Updated import
 import { User } from '../Interfaces/UserInterface';
 import EditFlatPage from '../../pages/EditFlatPage';
 import { Avatar } from 'primereact/avatar';
-import { Timestamp } from 'firebase/firestore';
+import { doc, getDoc, Timestamp } from 'firebase/firestore';
+import FlatImg from './../../images/apt-21.jpg';
+import { db } from '../../config/firebase';
 
 // interface FlatItemProps {
 //   flat: Flat;
@@ -20,6 +22,33 @@ const FlatItem = ({ flat }: { flat: Flat }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [dialogVisible, setDialogVisible] = useState<boolean>(false);
+  const [fullFlat, setFullFlat] = useState<Flat | null>(null);
+
+  useEffect(() => {
+    const fetchFlat = async () => {
+      try {
+        console.log('Fetching flat with ID:', flat.flatId);
+        const flatRef = doc(db, 'flats', flat.flatId!); // Ensure flat has an id here
+        const flatSnap = await getDoc(flatRef);
+        if (flatSnap.exists()) {
+          const fetchedFlat = {
+            ...flatSnap.data(),
+            flatId: flatSnap.id,
+          } as Flat;
+          console.log('Fetched flat:', fetchedFlat);
+          setFullFlat(fetchedFlat); // Assign id from document
+        } else {
+          console.error('Flat does not exist.');
+        }
+      } catch (error) {
+        console.error('Error fetching flat:', error);
+      }
+    };
+
+    if (dialogVisible && flat.flatId) {
+      fetchFlat();
+    }
+  }, [dialogVisible, flat.flatId]);
 
   // Ensure you check and convert Timestamp to Date
   const formatDate = (date: Timestamp | Date): string => {
@@ -76,10 +105,7 @@ const FlatItem = ({ flat }: { flat: Flat }) => {
   const header = (
     <img
       alt={`${flat.streetNumber} ${flat.streetName}`}
-      src={
-        flat.flatImage ||
-        `https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2c/b0/b6/2b/apartment-hotels.jpg?w=1200&h=-1&s=1`
-      }
+      src={flat.flatImage || FlatImg}
     />
   );
   const footer = (
@@ -171,7 +197,11 @@ const FlatItem = ({ flat }: { flat: Flat }) => {
         style={{ width: '50vw' }}
         onHide={handleDialogClose}
       >
-        <EditFlatPage flat={flat} />
+        {fullFlat ? (
+          <EditFlatPage flat={fullFlat} onClose={handleDialogClose} />
+        ) : (
+          <div>Loading...</div> // Display a loading indicator or message
+        )}{' '}
       </Dialog>
     </>
   );

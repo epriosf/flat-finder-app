@@ -13,7 +13,11 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { useAuth } from '../../hooks/useAuth';
-import { createFlat, uploadFlatImage } from '../../services/firebase';
+import {
+  createFlat,
+  uploadFlatImage,
+  updateFlat,
+} from '../../services/firebase';
 import GeneralInput from '../Commons/Inputs/GeneralInput';
 import FormErrorMessage from '../Commons/Inputs/MessageErrors';
 import { Flat } from '../Interfaces/FlatInterface';
@@ -48,41 +52,45 @@ const FlatSchema = Yup.object({
   bathrooms: Yup.number().nullable().required('Bathrooms Required'),
 });
 
-interface Props {
-  flat?: Flat;
+interface FlatFormProps {
+  initialFlat?: Flat;
+  isEditing?: boolean;
+  onFormSubmit?: () => void; // Ensure this is correctly typed
 }
 
-const FlatForm = ({ flat }: Props) => {
+const FlatForm: React.FC<FlatFormProps> = ({
+  initialFlat,
+  isEditing = false,
+  onFormSubmit,
+}) => {
   const [flatFile, setFlatFile] = useState<File | null>(null);
   const navigate = useNavigate();
   const { user } = useAuth();
 
   useEffect(() => {
     if (!user) {
-      console.log('TRUE');
+      console.log('User not logged in');
       navigate('/');
-    } else {
-      console.log('else');
     }
-  }, []);
+  }, [user, navigate]);
 
   const formik = useFormik({
     initialValues: {
-      areaSize: flat?.areaSize || (null as number | null),
-      city: flat?.city || '',
-      dateAvailable: flat?.dateAvailable
-        ? flat.dateAvailable instanceof Timestamp
-          ? flat.dateAvailable.toDate()
-          : flat.dateAvailable
+      areaSize: initialFlat?.areaSize || (null as number | null),
+      city: initialFlat?.city || '',
+      dateAvailable: initialFlat?.dateAvailable
+        ? initialFlat.dateAvailable instanceof Timestamp
+          ? initialFlat.dateAvailable.toDate()
+          : initialFlat.dateAvailable
         : null,
-      hasAc: flat?.hasAc || false,
-      price: flat?.price || (null as number | null),
-      streetName: flat?.streetName || '',
-      streetNumber: flat?.streetNumber || (null as number | null),
-      yearBuilt: flat?.yearBuilt || (null as number | null),
-      flatImage: flat?.flatImage || '',
-      rooms: flat?.rooms || (null as number | null),
-      bathrooms: flat?.bathrooms || (null as number | null),
+      hasAc: initialFlat?.hasAc || false,
+      price: initialFlat?.price || (null as number | null),
+      streetName: initialFlat?.streetName || '',
+      streetNumber: initialFlat?.streetNumber || (null as number | null),
+      yearBuilt: initialFlat?.yearBuilt || (null as number | null),
+      flatImage: initialFlat?.flatImage || '',
+      rooms: initialFlat?.rooms || (null as number | null),
+      bathrooms: initialFlat?.bathrooms || (null as number | null),
     },
     validationSchema: FlatSchema,
     onSubmit: async (values, { resetForm }) => {
@@ -91,14 +99,14 @@ const FlatForm = ({ flat }: Props) => {
         console.error('User is not logged in or email is not available.');
         return;
       }
-      let imageUrl = '';
+      let imageUrl = initialFlat?.flatImage || '';
 
       try {
         if (flatFile) {
           imageUrl = await uploadFlatImage(flatFile);
         }
 
-        const flat: Omit<Flat, 'id'> = {
+        const flatData: Omit<Flat, 'flatId'> = {
           city: values.city,
           areaSize: values.areaSize,
           dateAvailable: values.dateAvailable
@@ -115,13 +123,34 @@ const FlatForm = ({ flat }: Props) => {
           flatImage: imageUrl,
         };
 
-        // Create the flat document and get its ID
-        const flatId = await createFlat(flat);
+        console.log('isEditing:', isEditing);
+        console.log('initialFlat.id:', initialFlat?.flatId);
 
-        console.log('Flat Created Successfully with ID:', flatId);
+        if (isEditing && initialFlat?.flatId) {
+          try {
+            await updateFlat({ ...flatData, flatId: initialFlat.flatId });
+            console.log('Flat updated successfully. Navigating to home...');
+            if (onFormSubmit) {
+              onFormSubmit(); // Close the dialog if the function is provided
+              window.location.reload(); // Refresh the page when the dialog closes
+            }
+            // navigate('/home');
+          } catch (error) {
+            console.error('Error updating flat:', error);
+          }
+        } else {
+          try {
+            const flatId = await createFlat(flatData);
+            console.log('Flat created successfully with ID:', flatId);
+            console.log('Navigating to home...');
+            navigate('/home');
+          } catch (error) {
+            console.error('Error creating flat:', error);
+          }
+        }
+
         resetForm();
         setFlatFile(null);
-        navigate('/home'); // Redirect to a different page after submission
       } catch (error) {
         console.error('Error creating flat:', error);
       }
@@ -372,10 +401,10 @@ const FlatForm = ({ flat }: Props) => {
         </div>
 
         {/* Image */}
-        {flat?.flatImage && (
+        {initialFlat?.flatImage && (
           <Image
-            src={flat?.flatImage}
-            alt={flat?.streetNumber + ' ' + flat?.streetName}
+            src={initialFlat?.flatImage}
+            alt={initialFlat?.streetNumber + ' ' + initialFlat?.streetName}
             className="flat-img-form object-cover "
             width="150"
           />
@@ -397,7 +426,7 @@ const FlatForm = ({ flat }: Props) => {
 
         {/* Button */}
         <Button
-          label="Create Flat"
+          label={isEditing ? 'Update Flat' : 'Create Flat'}
           type="submit"
           className="w-full bg-indigo-500 text-white"
         />

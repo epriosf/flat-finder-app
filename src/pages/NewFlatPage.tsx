@@ -16,7 +16,7 @@ const NewFlatPage = () => {
         </div>
         <div className="w-full md:w-6">
           <h1 className="font-normal">Create New Flat</h1>
-          <FlatForm />
+          <FlatForm isEditing={false} />
         </div>
       </div>
     </>
