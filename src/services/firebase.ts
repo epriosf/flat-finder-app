@@ -5,6 +5,7 @@ import {
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -249,6 +250,16 @@ export const updateFlat = async (flat: Flat) => {
     await updateDoc(flatRef, flatData);
   } catch (error) {
     console.error('Error updating flat:', error);
+    throw error;
+  }
+};
+
+export const deleteFlat = async (flatId: string) => {
+  try {
+    const flatRef = doc(db, 'flats', flatId);
+    await deleteDoc(flatRef);
+  } catch (error) {
+    console.error('Error deleting flat:', error);
     throw error;
   }
 };

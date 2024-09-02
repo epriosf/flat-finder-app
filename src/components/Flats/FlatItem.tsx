@@ -13,12 +13,19 @@ import { doc, getDoc, Timestamp } from 'firebase/firestore';
 import FlatImg from './../../images/apt-21.jpg';
 import { db } from '../../config/firebase';
 
-// interface FlatItemProps {
-//   flat: Flat;
-//   onEdit: (flat: Flat) => void; // Callback to handle edit action
-// }
+interface FlatItemProps {
+  flat: Flat;
+  activeDialog: string | null;
+  setActiveDialog: (id: string | null) => void;
+  onDeleteRequest: (flatId: string) => void;
+}
 
-const FlatItem = ({ flat }: { flat: Flat }) => {
+const FlatItem: React.FC<FlatItemProps> = ({
+  flat,
+  activeDialog,
+  setActiveDialog,
+  onDeleteRequest,
+}) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [dialogVisible, setDialogVisible] = useState<boolean>(false);
@@ -88,11 +95,23 @@ const FlatItem = ({ flat }: { flat: Flat }) => {
 
   const handleEditClick = () => {
     setDialogVisible(true);
+    setActiveDialog(flat.flatId);
   };
 
   const handleDialogClose = () => {
     setDialogVisible(false);
+    setActiveDialog(null);
   };
+
+  // const confirmDelete = () => {
+  //   confirmDialog({
+  //     message: 'Are you sure you want to delete this flat?',
+  //     header: 'Confirmation',
+  //     icon: 'pi pi-exclamation-triangle',
+  //     acceptClassName: 'p-button-danger',
+  //     accept: () => onDeleteRequest(flat.flatId),
+  //   });
+  // };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -118,6 +137,7 @@ const FlatItem = ({ flat }: { flat: Flat }) => {
         text
         raised
         aria-label="Delete"
+        onClick={() => onDeleteRequest(flat.flatId)} // Trigger the delete confirmation from FlatList
       />
       <Button
         icon="pi pi-pencil"
@@ -193,7 +213,7 @@ const FlatItem = ({ flat }: { flat: Flat }) => {
       </Card>
       <Dialog
         header="Edit Flat"
-        visible={dialogVisible}
+        visible={activeDialog === flat.flatId && dialogVisible}
         style={{ width: '50vw' }}
         onHide={handleDialogClose}
       >

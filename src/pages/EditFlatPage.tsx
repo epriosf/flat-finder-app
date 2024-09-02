@@ -10,7 +10,6 @@ const EditFlatPage: React.FC<EditFlatPageProps> = ({ flat, onClose }) => {
   console.log('Flat ID in EditFlatPage:', flat.flatId); // Debugging
   return (
     <div>
-      <h2>Edit Flat</h2>
       {/* Pass the flat data and set isEditing to true */}
       <FlatForm initialFlat={flat} isEditing={true} onFormSubmit={onClose} />
     </div>
