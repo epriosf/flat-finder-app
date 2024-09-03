@@ -27,6 +27,9 @@ const FlatList: React.FC<FlatListProps> = ({ flats, onFlatDeleted }) => {
           console.log(`Flat with ID ${flatId} deleted successfully.`);
           if (onFlatDeleted) {
             onFlatDeleted(flatId); // Optionally trigger any additional actions after deletion
+            console.log(
+              `Flat with ID ${flatId} deleted successfully. with onFlatDeleted callback`,
+            );
           }
         } catch (error) {
           console.error('Error deleting flat:', error);
