@@ -31,11 +31,15 @@ const HomePage = () => {
     window.scrollTo(0, 0);
   };
 
+  const handleFlatDeleted = (deletedFlatId: string) => {
+    setFlats(flats.filter((flat) => flat.flatId !== deletedFlatId));
+  };
+
   const currentFlats = flats.slice(first, first + rows);
   return (
     <>
       <FlatTitle title="Home" />
-      <FlatList flats={currentFlats} />
+      <FlatList flats={currentFlats} onFlatDeleted={handleFlatDeleted} />
       <Paginator
         first={first}
         rows={rows}

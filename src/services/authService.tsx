@@ -8,6 +8,8 @@ import {
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
 
+const TOKEN_KEY = 'authToken';
+
 // Set persistence to 'local' to use localStorage
 export const initializeAuthPersistence = async (): Promise<void> => {
   await setPersistence(auth, browserLocalPersistence);
@@ -38,4 +40,8 @@ export const onAuthStateChange = (
   callback: (user: User | null) => void,
 ): (() => void) => {
   return onAuthStateChanged(auth, callback);
+};
+
+export const removeToken = () => {
+  localStorage.removeItem(TOKEN_KEY);
 };
