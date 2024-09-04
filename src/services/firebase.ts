@@ -4,6 +4,8 @@ import {
 } from 'firebase/auth';
 import {
   addDoc,
+  arrayRemove,
+  arrayUnion,
   collection,
   deleteDoc,
   doc,
@@ -272,6 +274,70 @@ export const deleteFlat = async (flatId: string) => {
     console.log(`Flat with ID ${flatId} deleted successfully.`);
   } catch (error) {
     console.error('Error deleting flat:', error);
+    throw error;
+  }
+};
+
+// Function to toggle flat to user's favorites
+export const toggleFavoriteFlat = async (
+  userEmail: string,
+  flatId: string,
+  isFavorite: boolean,
+) => {
+  if (!userEmail || !flatId) {
+    console.error('Invalid userEmail or flatId');
+    return;
+  }
+
+  try {
+    const usersRef = collection(db, 'users');
+    const q = query(usersRef, where('email', '==', userEmail));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      console.error(`No user document found for ${userEmail}`);
+      throw new Error(`User document does not exist for ${userEmail}`);
+    }
+
+    const userDoc = querySnapshot.docs[0];
+    const userRef = userDoc.ref;
+
+    if (isFavorite) {
+      // Remove the flat from favorites
+      await updateDoc(userRef, {
+        favoriteFlats: arrayRemove(flatId),
+      });
+      console.log(
+        `Flat ${flatId} removed from favorites for user ${userEmail}`,
+      );
+    } else {
+      // Add the flat to favorites
+      await updateDoc(userRef, {
+        favoriteFlats: arrayUnion(flatId),
+      });
+      console.log(`Flat ${flatId} added to favorites for user ${userEmail}`);
+    }
+  } catch (error) {
+    console.error('Error toggling flat favorite status:', error);
+    throw error;
+  }
+};
+
+// Get Flats created by logged user
+export const getUserFlats = async (email: string): Promise<Flat[]> => {
+  try {
+    const flatsRef = collection(db, 'flats');
+    const q = query(flatsRef, where('flatUser', '==', email)); // Query flats by flatUser email
+    const querySnapshot = await getDocs(q);
+
+    const flats: Flat[] = querySnapshot.docs.map((doc) => ({
+      ...doc.data(),
+      flatId: doc.id,
+    })) as Flat[];
+
+    return flats;
+  } catch (error) {
+    console.error('Error fetching user flats:', error);
     throw error;
   }
 };

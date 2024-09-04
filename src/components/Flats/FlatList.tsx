@@ -11,8 +11,13 @@ import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 interface FlatListProps {
   flats: Flat[];
   onFlatDeleted?: (flatId: string) => void; // Optional callback to handle post-deletion actions (e.g., updating state)
+  onFavoriteToggle?: (flatId: string, isFavorite: boolean) => void; // New callback prop
 }
-const FlatList: React.FC<FlatListProps> = ({ flats, onFlatDeleted }) => {
+const FlatList: React.FC<FlatListProps> = ({
+  flats,
+  onFlatDeleted,
+  onFavoriteToggle,
+}) => {
   const [activeDialog, setActiveDialog] = useState<string | null>(null);
 
   const handleDeleteRequest = (flatId: string) => {
@@ -49,6 +54,7 @@ const FlatList: React.FC<FlatListProps> = ({ flats, onFlatDeleted }) => {
             activeDialog={activeDialog}
             setActiveDialog={setActiveDialog}
             onDeleteRequest={handleDeleteRequest}
+            onFavoriteToggle={onFavoriteToggle} // Pass the callback down
           />
         </div>
       ))}
