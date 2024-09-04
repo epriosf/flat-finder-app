@@ -56,9 +56,9 @@ const SignupSchema = Yup.object({
     .required('Password Confirm Required'),
 });
 interface RegisterPageProps {
-  mode: string;
-  userUpdate: User | null;
-  isAdminister: boolean;
+  mode?: string;
+  userUpdate?: User;
+  isAdminister?: boolean;
 }
 
 const RegisterPage = ({
