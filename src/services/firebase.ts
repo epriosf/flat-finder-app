@@ -5,6 +5,7 @@ import {
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -249,6 +250,28 @@ export const updateFlat = async (flat: Flat) => {
     await updateDoc(flatRef, flatData);
   } catch (error) {
     console.error('Error updating flat:', error);
+    throw error;
+  }
+};
+
+export const deleteFlat = async (flatId: string) => {
+  try {
+    if (!flatId) {
+      throw new Error('Flat ID is missing.');
+    }
+
+    const flatRef = doc(db, 'flats', flatId);
+
+    // Optional: Check if the document exists before attempting to delete it
+    const flatDoc = await getDoc(flatRef);
+    if (!flatDoc.exists()) {
+      throw new Error(`Flat with ID ${flatId} does not exist.`);
+    }
+
+    await deleteDoc(flatRef);
+    console.log(`Flat with ID ${flatId} deleted successfully.`);
+  } catch (error) {
+    console.error('Error deleting flat:', error);
     throw error;
   }
 };

@@ -3,28 +3,56 @@
 // import { getFlats } from '../../services/firebase';
 import FlatItem from './FlatItem';
 import { Flat } from '../Interfaces/FlatInterface'; // Updated import
+// import { confirmDialog } from 'primereact/confirmdialog';
+import { useState } from 'react';
+import { deleteFlat } from '../../services/firebase';
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 
 interface FlatListProps {
   flats: Flat[];
+  onFlatDeleted?: (flatId: string) => void; // Optional callback to handle post-deletion actions (e.g., updating state)
 }
-const FlatList: React.FC<FlatListProps> = ({ flats }) => {
-  // const [flats, setFlats] = useState<Flat[]>([]);
+const FlatList: React.FC<FlatListProps> = ({ flats, onFlatDeleted }) => {
+  const [activeDialog, setActiveDialog] = useState<string | null>(null);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const data = await getFlats();
-  //     setFlats(data as Flat[]);
-  //   };
-  //   fetchData();
-  // }, []);
-
+  const handleDeleteRequest = (flatId: string) => {
+    confirmDialog({
+      message: 'Are you sure you want to delete this flat?',
+      header: 'Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      acceptClassName: 'p-button-danger',
+      accept: async () => {
+        try {
+          await deleteFlat(flatId);
+          console.log(`Flat with ID ${flatId} deleted successfully.`);
+          if (onFlatDeleted) {
+            onFlatDeleted(flatId); // Optionally trigger any additional actions after deletion
+            console.log(
+              `Flat with ID ${flatId} deleted successfully. with onFlatDeleted callback`,
+            );
+          }
+        } catch (error) {
+          console.error('Error deleting flat:', error);
+        }
+      },
+      reject: () => {
+        console.log('Deletion cancelled.');
+      },
+    });
+  };
   return (
     <div className="grid">
       {flats.map((flat, index) => (
         <div key={index} className="col-12 md:col-6 lg:col-4">
-          <FlatItem flat={flat} />
+          <FlatItem
+            flat={flat}
+            activeDialog={activeDialog}
+            setActiveDialog={setActiveDialog}
+            onDeleteRequest={handleDeleteRequest}
+          />
         </div>
       ))}
+      <ConfirmDialog />
     </div>
   );
 };
