@@ -2,9 +2,9 @@ import { Avatar } from 'primereact/avatar';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { useState } from 'react';
-import RegisterPage from '../../pages/RegisterPage';
 import { User } from '../Interfaces/UserInterface';
 import bgProfile from './../../images/bg-profile.png';
+import UpdateProfile from './UpdateProfile';
 interface ProfileViewProps {
   user: User;
 }
@@ -78,11 +78,7 @@ const ProfileView = ({ user }: ProfileViewProps) => {
         onHide={handleDialogClose}
       >
         {user ? (
-          <RegisterPage
-            userUpdate={user}
-            mode="edit"
-            isAdminister={user.isAdmin}
-          />
+          <UpdateProfile userUpdate={user} isAdminister={user.isAdmin} />
         ) : (
           <div>Loading...</div>
         )}{' '}

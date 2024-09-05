@@ -12,3 +12,13 @@ export interface UserOrderBy {
   firstName: string;
   lastName: string;
 }
+
+//User Type
+export interface UserRegister {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  birthday: Date;
+  profile: string;
+}

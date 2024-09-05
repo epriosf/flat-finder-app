@@ -14,11 +14,16 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from 'firebase/storage';
 import { Flat } from '../components/Interfaces/FlatInterface';
 import { User } from '../components/Interfaces/UserInterface';
 import { auth, db, storage } from '../config/firebase';
-import { UserRegister } from '../pages/RegisterPage';
+import { UserRegister } from '../types/User';
 
 const collectionName = 'users';
 const usersColletionRef = collection(db, collectionName);
@@ -272,6 +277,71 @@ export const deleteFlat = async (flatId: string) => {
     console.log(`Flat with ID ${flatId} deleted successfully.`);
   } catch (error) {
     console.error('Error deleting flat:', error);
+    throw error;
+  }
+};
+
+//Method to update the user
+export const updateUserByEmail = async (
+  email: string,
+  updatedData: Partial<UserRegister>,
+) => {
+  try {
+    // Reference to the "users" collection
+    const usersCollectionRef = collection(db, 'users');
+
+    // Query to find the document with the specified email
+    const q = query(usersCollectionRef, where('email', '==', email));
+
+    // Execute the query
+    const querySnapshot = await getDocs(q);
+
+    // Check if a matching document was found
+    if (querySnapshot.empty) {
+      throw new Error('User not found with the provided email.');
+    }
+
+    // Assuming emails are unique, we should only have one document
+    const userDoc = querySnapshot.docs[0];
+    const userDocRef = doc(db, 'users', userDoc.id);
+
+    // Update the user document with the new data
+    await updateDoc(userDocRef, updatedData);
+
+    console.log('User updated successfully');
+  } catch (error) {
+    console.error('Error updating user:', error);
+    throw error;
+  }
+};
+
+// Method to verify the user password
+export const verifyUserPassword = async (email: string, password: string) => {
+  try {
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password,
+    );
+    console.log('User authenticated:', userCredential.user);
+    return true;
+  } catch (error) {
+    console.error('Authentication failed:', error);
+    return false;
+  }
+};
+
+export const deleteProfileImage = async (imageUrl: string) => {
+  try {
+    // Create a reference to the file to delete
+    const imageRef = ref(storage, imageUrl);
+
+    // Delete the file
+    await deleteObject(imageRef);
+
+    console.log('Image deleted successfully');
+  } catch (error) {
+    console.error('Error deleting image:', error);
     throw error;
   }
 };

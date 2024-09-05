@@ -1,21 +1,27 @@
+import { Timestamp } from 'firebase/firestore';
 import { useFormik } from 'formik';
 import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
 import { FileUpload, FileUploadHandlerEvent } from 'primereact/fileupload';
 import { FloatLabel } from 'primereact/floatlabel';
+import { InputSwitch, InputSwitchChangeEvent } from 'primereact/inputswitch';
 import { Message } from 'primereact/message';
-import { Nullable } from 'primereact/ts-helpers';
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
 import * as Yup from 'yup';
-import GeneralInput from '../components/Commons/Inputs/GeneralInput';
-import PasswordInput from '../components/Commons/Inputs/PasswordInput';
+
+import { Image } from 'primereact/image';
+
+import { Nullable } from 'primereact/ts-helpers';
+import GeneralInput from '../Commons/Inputs/GeneralInput';
+import PasswordInput from '../Commons/Inputs/PasswordInput';
+import { User } from '../Interfaces/UserInterface';
 import {
-  registerUserWithAuth,
-  registerUserWithFirestore,
+  deleteProfileImage,
+  updateUserByEmail,
   uploadProfileImage,
-} from '../services/firebase';
-import { UserRegister } from '../types/User';
+  verifyUserPassword,
+} from './../../services/firebase';
+import { UserRegister } from './../../types/User';
 
 //Min and Max Dates
 const today = new Date();
@@ -34,61 +40,68 @@ const SignupSchema = Yup.object({
     .min(minDate, 'Date can not be 120 years more ago')
     .max(maxDate, 'Date can not be more than 18 years ago'),
   password: Yup.string().required('Password Required'),
-  passwordConfirm: Yup.string()
-    .oneOf([Yup.ref('password')], 'Passwords must match')
-    .required('Password Confirm Required'),
 });
 
-const RegisterPage = () => {
-  const navigate = useNavigate();
+interface UpdatePofileProps {
+  userUpdate?: User;
+  isAdminister?: boolean;
+}
+
+const UpdateProfile = ({
+  userUpdate,
+  isAdminister = false,
+}: UpdatePofileProps) => {
+  // const navigate = useNavigate();
   const [profileFile, setProfileFile] = useState<File | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
 
   const formik = useFormik({
     initialValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      birthday: null,
+      firstName: userUpdate?.firstName || '',
+      lastName: userUpdate?.lastName || '',
+      email: userUpdate?.email || '',
+      birthday: userUpdate?.birthday
+        ? userUpdate.birthday instanceof Timestamp
+          ? userUpdate.birthday.toDate()
+          : userUpdate.birthday
+        : null,
       password: '',
-      passwordConfirm: '',
+      isAdmin: userUpdate?.isAdmin || false,
     },
     validationSchema: SignupSchema,
-    onSubmit: async (values, { resetForm }) => {
-      let imageUrl = '';
-
+    onSubmit: async (values) => {
       try {
+        if (!values.password) {
+          setPasswordError('Pasword Required');
+          return;
+        }
+        let imageUrl = userUpdate?.profile || '';
+
         if (profileFile) {
+          if (userUpdate?.profile) {
+            // Delete the old profile image if it exists
+            await deleteProfileImage(userUpdate.profile);
+          }
           imageUrl = await uploadProfileImage(profileFile);
         }
         const user: UserRegister = {
           firstName: values.firstName,
           lastName: values.lastName,
           email: values.email,
-          birthday: values.birthday
-            ? new Date(values.birthday)
-            : new Date(today),
+          birthday: values.birthday ? values.birthday : new Date(today),
           password: values.password,
           profile: imageUrl,
         };
 
-        const userCredential = await registerUserWithAuth(
-          user.email,
-          user.password,
-        );
-        await registerUserWithFirestore(userCredential.uid, {
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          password: user.password,
-          birthday: user.birthday,
-          profile: user.profile,
-        });
-        console.log('User Register Succesfully');
-        resetForm();
-        setProfileFile(null);
-        navigate('/login');
+        const verified = await verifyUserPassword(user.email, user.password);
+        if (verified) {
+          await updateUserByEmail(userUpdate!.email, user);
+        } else {
+          setPasswordError('Password is incorrect');
+        }
       } catch (error) {
         console.error('Error registering user:', error);
+        setPasswordError('Password is incorrect');
       }
     },
   });
@@ -105,13 +118,17 @@ const RegisterPage = () => {
 
   return (
     <>
-      <form id="loginForm" onSubmit={formik.handleSubmit}>
+      <form id="newFlatForm" onSubmit={formik.handleSubmit}>
+        <div className="flex justify-content-center mb-4">
+          <Image src={userUpdate?.profile} alt="userProfile" width="150" />
+        </div>
+
         <GeneralInput
           id="firstName"
           name="firstName"
           value={formik.values.firstName}
           onChange={formik.handleChange}
-          iconClass="pi pi-user"
+          iconClass="pi pi-user text-500"
           label="FirstName"
           type="text"
         />
@@ -131,7 +148,7 @@ const RegisterPage = () => {
           name="lastName"
           value={formik.values.lastName}
           onChange={formik.handleChange}
-          iconClass="pi pi-user"
+          iconClass="pi pi-user text-500"
           label="LastName"
           type="text"
         />
@@ -152,9 +169,10 @@ const RegisterPage = () => {
           name="email"
           value={formik.values.email}
           onChange={formik.handleChange}
-          iconClass="pi pi-envelope"
+          iconClass="pi pi-envelope text-500"
           label="Email"
           type="email"
+          disabled={true}
         />
 
         {formik.touched.email && formik.errors.email ? (
@@ -167,7 +185,6 @@ const RegisterPage = () => {
         ) : (
           <div className="mt-5"></div>
         )}
-
         <FloatLabel>
           <div className="p-inputgroup">
             <span className="p-inputgroup-addon">
@@ -186,6 +203,7 @@ const RegisterPage = () => {
             Birth Date
           </label>
         </FloatLabel>
+
         {formik.touched.birthday && formik.errors.birthday ? (
           <Message
             severity="error"
@@ -203,6 +221,7 @@ const RegisterPage = () => {
           onChange={formik.handleChange}
           iconClass="pi pi-lock text-500"
           label="password"
+          disabled={false}
         />
         {formik.touched.password && formik.errors.password ? (
           <Message
@@ -211,26 +230,30 @@ const RegisterPage = () => {
             className="mb-1 w-full justify-content-start text-pink-300"
             style={{ backgroundColor: 'transparent' }}
           />
-        ) : (
-          <div className="mt-5"></div>
-        )}
-        <PasswordInput
-          id="passwordConfirm"
-          name="passwordConfirm"
-          value={formik.values.passwordConfirm}
-          onChange={formik.handleChange}
-          iconClass="pi pi-lock text-500"
-          label="password confirm"
-        />
-        {formik.touched.passwordConfirm && formik.errors.passwordConfirm ? (
+        ) : passwordError ? (
           <Message
             severity="error"
-            text={formik.errors.passwordConfirm}
+            text={passwordError}
             className="mb-1 w-full justify-content-start text-pink-300"
             style={{ backgroundColor: 'transparent' }}
           />
         ) : (
           <div className="mt-5"></div>
+        )}
+
+        {isAdminister && (
+          <>
+            <div className="mt-3">
+              <InputSwitch
+                checked={formik.values.isAdmin}
+                onChange={(e: InputSwitchChangeEvent) =>
+                  formik.setFieldValue('isAdmin', e.value)
+                }
+                className="mr-3"
+              />
+              <span>Is Admin</span>
+            </div>
+          </>
         )}
 
         <FileUpload
@@ -241,16 +264,16 @@ const RegisterPage = () => {
           emptyTemplate={
             <p className="m-0">Drag and drop images to here to upload.</p>
           }
-          chooseLabel="Photo"
+          chooseLabel={'Update Photo'}
           customUpload
           auto
           uploadHandler={handleUploadImage}
         />
 
-        <Button label="Sign up" className="w-full mt-5" type="submit" />
+        <Button label={'Save Changes'} className="w-full mt-5" type="submit" />
       </form>
     </>
   );
 };
 
-export default RegisterPage;
+export default UpdateProfile;
