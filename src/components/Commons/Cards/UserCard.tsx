@@ -21,6 +21,7 @@ const UserCard: React.FC<UserCardProps> = ({
   flatsNumber,
   isAdmin,
 }) => {
+  const handleEditClick = () => {};
   const header = (
     <div className="flex gap-3 align-items-center md:w-25rem mb-0">
       <Avatar
@@ -32,6 +33,17 @@ const UserCard: React.FC<UserCardProps> = ({
       <p>
         {name} {lastname}
       </p>
+
+      <Button
+        icon="pi pi-pencil"
+        className="bg-primary-100"
+        size="small"
+        rounded
+        text
+        raised
+        aria-label="Edit"
+        onClick={handleEditClick}
+      />
     </div>
   );
   const footer = (
@@ -53,39 +65,41 @@ const UserCard: React.FC<UserCardProps> = ({
   );
 
   return (
-    <Card
-      footer={footer}
-      header={header}
-      className="border-1 border-round-xl border-indigo-300 bg-indigo-50"
-    >
-      <p className="mt-0">
-        <i className="pi pi-user"></i>
-        <span className="font-semibold"> Age:</span>
-        {age}
-      </p>
-      <p>
-        <i className="pi pi-at"></i>
-        <span className="font-semibold"> Email:</span>
-        {email}
-      </p>
-      <p>
-        <i className="pi pi-calendar-clock"></i>
-        <span className="font-semibold"> Date Of Bith:</span>
-        {birthday}
-      </p>
-      <p>
-        <i className="pi pi-user"></i>
-        <span className="font-semibold"> #Flats:</span>
-        {flatsNumber}
-      </p>
-      <p>
-        <span
-          className={`border-1 border-round-xl border-300 border-indigo-300 p-2 ${isAdmin ? 'bg-indigo-100' : 'bg-indigo-50'}`}
-        >
-          {isAdmin ? 'Is Admin' : 'Not Admin'}
-        </span>
-      </p>
-    </Card>
+    <>
+      <Card
+        footer={footer}
+        header={header}
+        className="border-1 border-round-xl border-indigo-300 bg-indigo-50"
+      >
+        <p className="mt-0">
+          <i className="pi pi-user"></i>
+          <span className="font-semibold"> Age:</span>
+          {age}
+        </p>
+        <p>
+          <i className="pi pi-at"></i>
+          <span className="font-semibold"> Email:</span>
+          {email}
+        </p>
+        <p>
+          <i className="pi pi-calendar-clock"></i>
+          <span className="font-semibold"> Date Of Bith:</span>
+          {birthday}
+        </p>
+        <p>
+          <i className="pi pi-user"></i>
+          <span className="font-semibold"> #Flats:</span>
+          {flatsNumber}
+        </p>
+        <p>
+          <span
+            className={`border-1 border-round-xl border-300 border-indigo-300 p-2 ${isAdmin ? 'bg-indigo-100' : 'bg-indigo-50'}`}
+          >
+            {isAdmin ? 'Is Admin' : 'Not Admin'}
+          </span>
+        </p>
+      </Card>
+    </>
   );
 };
 export default UserCard;

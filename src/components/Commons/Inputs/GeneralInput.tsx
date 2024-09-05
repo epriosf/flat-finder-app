@@ -18,6 +18,7 @@ interface GeneralInputProps {
   label: string;
   type?: 'text' | 'number' | 'email';
   className?: string;
+  disabled?: boolean;
 }
 
 const GeneralInput: React.FC<GeneralInputProps> = ({
@@ -29,6 +30,7 @@ const GeneralInput: React.FC<GeneralInputProps> = ({
   label,
   type = 'text',
   className = '',
+  disabled = false,
 }) => (
   <FloatLabel>
     <IconField iconPosition="left" className="w-full text-500">
@@ -41,6 +43,7 @@ const GeneralInput: React.FC<GeneralInputProps> = ({
           onValueChange={(e) => onChange(e)}
           className={`w-full bg-white ${className}`}
           mode="decimal"
+          disabled={disabled}
         />
       ) : (
         <InputText
@@ -50,6 +53,7 @@ const GeneralInput: React.FC<GeneralInputProps> = ({
           className={`w-full bg-white ${className}`}
           onChange={onChange}
           type={type}
+          disabled={disabled}
         />
       )}
     </IconField>

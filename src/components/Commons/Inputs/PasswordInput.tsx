@@ -10,6 +10,7 @@ interface PasswordInputProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   iconClass: string;
   label: string;
+  disabled?: boolean;
 }
 
 const PasswordInput: React.FC<PasswordInputProps> = ({
@@ -19,6 +20,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
   onChange,
   iconClass,
   label,
+  disabled = false,
 }) => (
   <FloatLabel>
     <IconField iconPosition="left" className="w-full">
@@ -30,7 +32,8 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
         className="w-full text-500"
         onChange={onChange}
         feedback={false}
-        toggleMask
+        toggleMask={!disabled}
+        disabled={disabled}
       />
     </IconField>
     <label htmlFor={id} className="left-3 text-400">
