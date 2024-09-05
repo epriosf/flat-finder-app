@@ -1,4 +1,5 @@
-import { createContext, ReactNode, useState, useEffect } from 'react';
+import { createContext, ReactNode, useEffect, useState } from 'react';
+import { User } from '../components/Interfaces/UserInterface';
 import {
   initializeAuthPersistence,
   loginUser,
@@ -6,10 +7,10 @@ import {
   onAuthStateChange,
 } from '../services/authService';
 import { getUserByEmail } from '../services/firebase';
-import { User } from '../components/Interfaces/UserInterface';
 
 export interface AuthContextType {
   user: User | null;
+  loading: boolean;
   login: (email: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
 }
@@ -20,6 +21,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -48,7 +50,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
             isAdmin: userFromDb.isAdmin ?? false,
           });
         }
+      } else {
+        setUser(null);
       }
+      setLoading(false); // Set loading to false after fetching user data
     });
 
     return () => unsubscribe();
@@ -65,7 +70,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       const userDb = await getUserByEmail(authUser.email!);
 
       if (userDb.length > 0) {
-        return {
+        const loggedInUser = {
           firstName: userDb[0].firstName,
           lastName: userDb[0].lastName,
           profile: userDb[0].profile,
@@ -76,6 +81,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
           profileImage: userDb[0].profileImage || '',
           isAdmin: userDb[0].isAdmin ?? false,
         };
+        setUser(loggedInUser);
+        return loggedInUser;
       } else {
         throw new Error('Login failed: User not found in the database.');
       }
@@ -95,7 +102,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
