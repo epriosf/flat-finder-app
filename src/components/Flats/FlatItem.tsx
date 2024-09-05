@@ -11,8 +11,6 @@ import EditFlatPage from '../../pages/EditFlatPage';
 import { Avatar } from 'primereact/avatar';
 import {
   collection,
-  doc,
-  getDoc,
   getDocs,
   query,
   Timestamp,
@@ -21,13 +19,14 @@ import {
 import FlatImg from './../../images/apt-21.jpg';
 import { db } from '../../config/firebase';
 import { useAuth } from '../../hooks/useAuth';
+import FlatDetailsPage from '../../pages/FlatDetailsPage';
 
 interface FlatItemProps {
   flat: Flat;
   activeDialog: string | null;
   setActiveDialog: (id: string | null) => void;
   onDeleteRequest: (flatId: string) => void;
-  onFavoriteToggle?: (flatId: string, isFavorite: boolean) => void; // New callback prop
+  onFavoriteToggle?: (flatId: string, isFavorite: boolean) => void;
 }
 
 const FlatItem: React.FC<FlatItemProps> = ({
@@ -39,8 +38,9 @@ const FlatItem: React.FC<FlatItemProps> = ({
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [dialogVisible, setDialogVisible] = useState<boolean>(false);
-  const [fullFlat, setFullFlat] = useState<Flat | null>(null);
+  const [viewDialogVisible, setViewDialogVisible] = useState(false);
+  const [editDialogVisible, setEditDialogVisible] = useState(false);
+  // const [fullFlat, setFullFlat] = useState<Flat | null>(null);
   const { user: loggedUser } = useAuth();
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -77,31 +77,6 @@ const FlatItem: React.FC<FlatItemProps> = ({
     checkIfFavorite();
   }, [loggedUser, flat.flatId]);
 
-  // Fetch the full flat data if the dialog is visible
-  useEffect(() => {
-    const fetchFlat = async () => {
-      try {
-        const flatRef = doc(db, 'flats', flat.flatId!);
-        const flatSnap = await getDoc(flatRef);
-        if (flatSnap.exists()) {
-          const fetchedFlat = {
-            ...flatSnap.data(),
-            flatId: flatSnap.id,
-          } as Flat;
-          setFullFlat(fetchedFlat);
-        } else {
-          console.error('Flat does not exist.');
-        }
-      } catch (error) {
-        console.error('Error fetching flat:', error);
-      }
-    };
-
-    if (dialogVisible && flat.flatId) {
-      fetchFlat();
-    }
-  }, [dialogVisible, flat.flatId]);
-
   const formatDate = (date: Timestamp | Date): string => {
     const dateObj = date instanceof Timestamp ? date.toDate() : date;
     const formatter = new Intl.DateTimeFormat('en-GB', {
@@ -116,23 +91,40 @@ const FlatItem: React.FC<FlatItemProps> = ({
     ? formatDate(flat.dateAvailable)
     : 'N/A';
 
-  const handleEditClick = () => {
-    setDialogVisible(true);
+  const handleCardClick = () => {
+    setViewDialogVisible(true);
     setActiveDialog(flat.flatId);
   };
 
-  const handleDialogClose = () => {
-    setDialogVisible(false);
+  const handleViewDialogClose = () => {
+    setViewDialogVisible(false);
     setActiveDialog(null);
   };
 
-  const handleFavoriteClick = async () => {
+  const handleEditClick = (event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent card click from triggering
+    setEditDialogVisible(true);
+    setActiveDialog(flat.flatId);
+  };
+
+  const handleEditDialogClose = () => {
+    setEditDialogVisible(false);
+    setActiveDialog(null);
+  };
+
+  const handleDeleteClick = (event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent card click from triggering
+    onDeleteRequest(flat.flatId);
+  };
+
+  const handleFavoriteClick = async (event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent card click from triggering
     if (loggedUser) {
       try {
         await toggleFavoriteFlat(loggedUser.email, flat.flatId, isFavorite);
         setIsFavorite(!isFavorite);
         if (onFavoriteToggle) {
-          onFavoriteToggle(flat.flatId, !isFavorite); // Trigger callback when favorite is toggled
+          onFavoriteToggle(flat.flatId, !isFavorite);
         }
       } catch (error) {
         console.error('Error toggling favorite:', error);
@@ -150,14 +142,15 @@ const FlatItem: React.FC<FlatItemProps> = ({
     return <div>User not found</div>;
   }
 
-  const header = (
+  // Header and footer for Card component
+  const headerCard = (
     <img
       alt={`${flat.streetNumber} ${flat.streetName}`}
       src={flat.flatImage || FlatImg}
     />
   );
 
-  const footer = (
+  const footerCard = (
     <div className="flex gap-2">
       {loggedUser && loggedUser.email === flat.flatUser && (
         <Button
@@ -168,7 +161,7 @@ const FlatItem: React.FC<FlatItemProps> = ({
           text
           raised
           aria-label="Delete"
-          onClick={() => onDeleteRequest(flat.flatId)}
+          onClick={handleDeleteClick}
         />
       )}
       {loggedUser && loggedUser.email === flat.flatUser && (
@@ -195,14 +188,30 @@ const FlatItem: React.FC<FlatItemProps> = ({
       />
     </div>
   );
+
+  // Header and footer for flat details dialog
+  // const headerDetails = (
+  //   <div>
+  //     <img
+  //       alt={`${flat.streetNumber} ${flat.streetName}`}
+  //       src={flat.flatImage || FlatImg}
+  //       style={{ maxWidth: '97%' }}
+  //     />
+  //     <h2>
+  //       {flat.streetNumber} {flat.streetName}
+  //     </h2>
+  //   </div>
+  // );
   return (
     <>
       <Card
         title={`${flat.streetName} ${flat.streetNumber}`}
         subTitle={flat.city}
-        footer={footer}
-        header={header}
+        footer={footerCard}
+        header={headerCard}
+        onClick={handleCardClick}
         className="flat-card border-round-xl"
+        style={{ cursor: 'pointer' }}
       >
         <div className="flex flex-column gap-1 mb-3 pt-2">
           <p className="text-lg font-bold p-0 m-0">Price: ${flat.price}</p>
@@ -245,17 +254,28 @@ const FlatItem: React.FC<FlatItemProps> = ({
           </div>
         )}
       </Card>
+      {/* Flat Details Dialog */}
+      <Dialog
+        // header={headerDetails}
+        visible={activeDialog === flat.flatId && viewDialogVisible}
+        className="w-full md:w-9 lg:w-6"
+        onHide={handleViewDialogClose}
+      >
+        {flat ? <FlatDetailsPage flat={flat} /> : <div>Loading...</div>}
+      </Dialog>
+
+      {/* Edit Flat Dialog */}
       <Dialog
         header="Edit Flat"
-        visible={activeDialog === flat.flatId && dialogVisible}
-        style={{ width: '50vw' }}
-        onHide={handleDialogClose}
+        visible={activeDialog === flat.flatId && editDialogVisible}
+        className="w-full md:w-9 lg:w-6"
+        onHide={handleEditDialogClose}
       >
-        {fullFlat ? (
-          <EditFlatPage flat={fullFlat} onClose={handleDialogClose} />
+        {flat ? (
+          <EditFlatPage flat={flat} onClose={handleEditDialogClose} />
         ) : (
-          <div>Loading...</div> // Display a loading indicator or message
-        )}{' '}
+          <div>Loading...</div>
+        )}
       </Dialog>
     </>
   );
