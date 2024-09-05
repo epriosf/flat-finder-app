@@ -78,7 +78,11 @@ const ProfileView = ({ user }: ProfileViewProps) => {
         onHide={handleDialogClose}
       >
         {user ? (
-          <UpdateProfile userUpdate={user} isAdminister={user.isAdmin} />
+          <UpdateProfile
+            userUpdate={user}
+            isAdminister={user.isAdmin}
+            onClose={handleDialogClose}
+          />
         ) : (
           <div>Loading...</div>
         )}{' '}

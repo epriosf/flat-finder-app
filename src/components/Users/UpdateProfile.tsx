@@ -45,13 +45,14 @@ const SignupSchema = Yup.object({
 interface UpdatePofileProps {
   userUpdate?: User;
   isAdminister?: boolean;
+  onClose: () => void;
 }
 
 const UpdateProfile = ({
   userUpdate,
   isAdminister = false,
+  onClose,
 }: UpdatePofileProps) => {
-  // const navigate = useNavigate();
   const [profileFile, setProfileFile] = useState<File | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
 
@@ -96,6 +97,8 @@ const UpdateProfile = ({
         const verified = await verifyUserPassword(user.email, user.password);
         if (verified) {
           await updateUserByEmail(userUpdate!.email, user);
+          onClose();
+          window.location.reload();
         } else {
           setPasswordError('Password is incorrect');
         }
@@ -108,7 +111,7 @@ const UpdateProfile = ({
 
   const handleBirthdayChange = (e: Nullable<Date>) => {
     formik.setFieldValue('birthday', e);
-    formik.setFieldTouched('birthday', true); // Mark birthday field as touched to trigger validation
+    formik.setFieldTouched('birthday', true);
   };
 
   const handleUploadImage = async (e: FileUploadHandlerEvent) => {

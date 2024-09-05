@@ -5,18 +5,17 @@ import ProfileView from '../components/Users/ProfileView';
 import { useAuth } from '../hooks/useAuth';
 import NewFlatImg from './../images/new-flat-img.png';
 const Profilepage = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth(); // Assume `useAuth` provides `isLoading`
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
+    if (!loading && !user) {
       navigate('/login');
     }
-  }, [user, navigate]);
+  }, [user, loading, navigate]);
 
-  if (!user) {
-    // Optionally, you can return null or a loading spinner while redirecting
-    return null;
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
   return (
@@ -32,7 +31,7 @@ const Profilepage = () => {
         </div>
         <div className="w-full md:w-6">
           <h1 className="font-normal">User Profile</h1>
-          <ProfileView user={user} />
+          <ProfileView user={user!} />
         </div>
       </div>
     </>
