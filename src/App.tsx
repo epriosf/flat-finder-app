@@ -21,7 +21,7 @@ const MyFlatsPage = lazy(() => import('./pages/MyFlatsPage'));
 const NewFlatPage = lazy(() => import('./pages/NewFlatPage'));
 const RegisterPage = lazy(() => import('./pages/RegisterPage'));
 const UpdateProfilePage = lazy(() => import('./pages/UpdateProfilePage'));
-const FlatDetailsPage = lazy(() => import('./pages/FlatDetailsPage'));
+// const FlatDetailsPage = lazy(() => import('./pages/FlatDetailsPage'));
 
 const router = createBrowserRouter([
   {
@@ -129,14 +129,14 @@ const router = createBrowserRouter([
           </Suspense>
         ),
       },
-      {
-        path: 'flat-details',
-        element: (
-          <Suspense fallback={<div>Loading...</div>}>
-            <FlatDetailsPage />
-          </Suspense>
-        ),
-      },
+      // {
+      //   path: 'flat-details',
+      //   element: (
+      //     <Suspense fallback={<div>Loading...</div>}>
+      //       <FlatDetailsPage flat={null} />
+      //     </Suspense>
+      //   ),
+      // },
       { path: '*', element: <ErrorPage /> },
     ],
   },
