@@ -13,7 +13,7 @@ import RootLayout from './pages/RootPage';
 // Lazy-loaded pages
 const HomePage = lazy(() => import('./pages/HomePage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
-const FavouritePage = lazy(() => import('./pages/FavouritesPage'));
+const FavouritesPage = lazy(() => import('./pages/FavouritesPage'));
 const AllUserPage = lazy(() => import('./pages/AllUserPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 // const EditFlatPage = lazy(() => import('./pages/EditFlatPage'));
@@ -77,7 +77,7 @@ const router = createBrowserRouter([
         path: 'favorites',
         element: (
           <Suspense fallback={<div>Loading...</div>}>
-            <FavouritePage />
+            <FavouritesPage />
           </Suspense>
         ),
       },

@@ -3,21 +3,31 @@ import { Button } from 'primereact/button';
 import { Chip } from 'primereact/chip';
 // import { Image } from 'primereact/image';
 import { useEffect, useState } from 'react';
-import { getUserByEmail } from '../../services/firebase';
+import { getUserByEmail, toggleFavoriteFlat } from '../../services/firebase';
 import { Dialog } from 'primereact/dialog';
 import { Flat } from '../Interfaces/FlatInterface'; // Updated import
 import { User } from '../Interfaces/UserInterface';
 import EditFlatPage from '../../pages/EditFlatPage';
 import { Avatar } from 'primereact/avatar';
-import { doc, getDoc, Timestamp } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  Timestamp,
+  where,
+} from 'firebase/firestore';
 import FlatImg from './../../images/apt-21.jpg';
 import { db } from '../../config/firebase';
+import { useAuth } from '../../hooks/useAuth';
 
 interface FlatItemProps {
   flat: Flat;
   activeDialog: string | null;
   setActiveDialog: (id: string | null) => void;
   onDeleteRequest: (flatId: string) => void;
+  onFavoriteToggle?: (flatId: string, isFavorite: boolean) => void; // New callback prop
 }
 
 const FlatItem: React.FC<FlatItemProps> = ({
@@ -25,25 +35,60 @@ const FlatItem: React.FC<FlatItemProps> = ({
   activeDialog,
   setActiveDialog,
   onDeleteRequest,
+  onFavoriteToggle,
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [dialogVisible, setDialogVisible] = useState<boolean>(false);
   const [fullFlat, setFullFlat] = useState<Flat | null>(null);
+  const { user: loggedUser } = useAuth();
+  const [isFavorite, setIsFavorite] = useState(false);
 
+  // Fetch the user data related to the flat
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const fetchedUser = await getUserByEmail(flat.flatUser);
+        setUser(fetchedUser.length > 0 ? fetchedUser[0] : null);
+      } catch (error) {
+        console.error('Failed to fetch user:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUser();
+  }, [flat.flatUser]);
+
+  // Check if the flat is already in the user's favorites
+  useEffect(() => {
+    const checkIfFavorite = async () => {
+      if (loggedUser) {
+        const usersRef = collection(db, 'users');
+        const q = query(usersRef, where('email', '==', loggedUser.email));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          const userDoc = querySnapshot.docs[0];
+          const userData = userDoc.data();
+          setIsFavorite(userData.favoriteFlats?.includes(flat.flatId));
+        }
+      }
+    };
+    checkIfFavorite();
+  }, [loggedUser, flat.flatId]);
+
+  // Fetch the full flat data if the dialog is visible
   useEffect(() => {
     const fetchFlat = async () => {
       try {
-        console.log('Fetching flat with ID:', flat.flatId);
-        const flatRef = doc(db, 'flats', flat.flatId!); // Ensure flat has an id here
+        const flatRef = doc(db, 'flats', flat.flatId!);
         const flatSnap = await getDoc(flatRef);
         if (flatSnap.exists()) {
           const fetchedFlat = {
             ...flatSnap.data(),
             flatId: flatSnap.id,
           } as Flat;
-          console.log('Fetched flat:', fetchedFlat);
-          setFullFlat(fetchedFlat); // Assign id from document
+          setFullFlat(fetchedFlat);
         } else {
           console.error('Flat does not exist.');
         }
@@ -57,41 +102,19 @@ const FlatItem: React.FC<FlatItemProps> = ({
     }
   }, [dialogVisible, flat.flatId]);
 
-  // Ensure you check and convert Timestamp to Date
   const formatDate = (date: Timestamp | Date): string => {
-    // Convert Timestamp to Date if needed
     const dateObj = date instanceof Timestamp ? date.toDate() : date;
-
-    // Create an Intl.DateTimeFormat instance for custom formatting
     const formatter = new Intl.DateTimeFormat('en-GB', {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
     });
-
     return formatter.format(dateObj);
   };
 
   const formattedDate = flat.dateAvailable
     ? formatDate(flat.dateAvailable)
     : 'N/A';
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        // Fetch user by email (flatUser)
-        const fetchedUser = await getUserByEmail(flat.flatUser);
-        // Assuming getUserByEmail returns an array, pick the first user if there's any
-        setUser(fetchedUser.length > 0 ? fetchedUser[0] : null);
-      } catch (error) {
-        console.error('Failed to fetch user:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, [flat.flatUser]);
 
   const handleEditClick = () => {
     setDialogVisible(true);
@@ -103,15 +126,21 @@ const FlatItem: React.FC<FlatItemProps> = ({
     setActiveDialog(null);
   };
 
-  // const confirmDelete = () => {
-  //   confirmDialog({
-  //     message: 'Are you sure you want to delete this flat?',
-  //     header: 'Confirmation',
-  //     icon: 'pi pi-exclamation-triangle',
-  //     acceptClassName: 'p-button-danger',
-  //     accept: () => onDeleteRequest(flat.flatId),
-  //   });
-  // };
+  const handleFavoriteClick = async () => {
+    if (loggedUser) {
+      try {
+        await toggleFavoriteFlat(loggedUser.email, flat.flatId, isFavorite);
+        setIsFavorite(!isFavorite);
+        if (onFavoriteToggle) {
+          onFavoriteToggle(flat.flatId, !isFavorite); // Trigger callback when favorite is toggled
+        }
+      } catch (error) {
+        console.error('Error toggling favorite:', error);
+      }
+    } else {
+      console.error('User is not logged in');
+    }
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -127,40 +156,45 @@ const FlatItem: React.FC<FlatItemProps> = ({
       src={flat.flatImage || FlatImg}
     />
   );
+
   const footer = (
     <div className="flex gap-2">
+      {loggedUser && loggedUser.email === flat.flatUser && (
+        <Button
+          icon="pi pi-trash"
+          className="bg-primary-100"
+          size="small"
+          rounded
+          text
+          raised
+          aria-label="Delete"
+          onClick={() => onDeleteRequest(flat.flatId)}
+        />
+      )}
+      {loggedUser && loggedUser.email === flat.flatUser && (
+        <Button
+          icon="pi pi-pencil"
+          className="bg-primary-100"
+          size="small"
+          rounded
+          text
+          raised
+          aria-label="Edit"
+          onClick={handleEditClick}
+        />
+      )}
       <Button
-        icon="pi pi-trash"
-        className="bg-primary-100"
-        size="small"
-        rounded
-        text
-        raised
-        aria-label="Delete"
-        onClick={() => onDeleteRequest(flat.flatId)} // Trigger the delete confirmation from FlatList
-      />
-      <Button
-        icon="pi pi-pencil"
-        className="bg-primary-100"
-        size="small"
-        rounded
-        text
-        raised
-        aria-label="Edit"
-        onClick={handleEditClick}
-      />
-      <Button
-        icon="pi pi-heart"
+        icon={isFavorite ? 'pi pi-heart-fill' : 'pi pi-heart'}
         className="bg-primary-100"
         size="small"
         rounded
         text
         raised
         aria-label="Favorite"
+        onClick={handleFavoriteClick}
       />
     </div>
   );
-
   return (
     <>
       <Card
