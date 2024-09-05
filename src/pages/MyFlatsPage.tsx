@@ -52,11 +52,11 @@ const MyFlatsPage: React.FC = () => {
             started.
           </p>
           <a
-            href="/new-flat"
+            href="/home/new-flat"
             rel="noopener noreferrer"
             className="p-button font-bold no-underline"
           >
-            See All Flats
+            Create New Flat
           </a>
         </div>
       )}
