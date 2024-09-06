@@ -23,13 +23,14 @@ import {
   uploadBytes,
 } from 'firebase/storage';
 import { Flat } from '../components/Interfaces/FlatInterface';
-import { User } from '../components/Interfaces/UserInterface';
+import { NewMessage } from '../components/Interfaces/MessageInterface';
+import { User, UserRegister } from '../components/Interfaces/UserInterface';
 import { auth, db, storage } from '../config/firebase';
-import { UserRegister } from '../types/User';
 
 const collectionName = 'users';
 const usersColletionRef = collection(db, collectionName);
 const flatsCollection = collection(db, 'flats');
+const messagesCollection = collection(db, 'messages');
 
 // Method to login a User
 export const loginUser = async (email: string, password: string) => {
@@ -408,6 +409,30 @@ export const deleteProfileImage = async (imageUrl: string) => {
     console.log('Image deleted successfully');
   } catch (error) {
     console.error('Error deleting image:', error);
+    throw error;
+  }
+};
+
+// Method to create a new flat
+export const createMessage = async (
+  message: Omit<NewMessage, 'flatId'>,
+): Promise<string> => {
+  try {
+    // Add the flat document to Firestore
+    const docRef = await addDoc(messagesCollection, message);
+
+    // Get the newly created flat's ID
+    const messageId = docRef.id;
+
+    // Update the flat document to include the messageId
+    await updateDoc(doc(db, 'messages', messageId), {
+      messageId: messageId,
+    });
+
+    // Return the newly created flat's ID
+    return messageId;
+  } catch (error) {
+    console.error('Error creating flat:', error);
     throw error;
   }
 };

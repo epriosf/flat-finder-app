@@ -14,14 +14,13 @@ import { Image } from 'primereact/image';
 import { Nullable } from 'primereact/ts-helpers';
 import GeneralInput from '../Commons/Inputs/GeneralInput';
 import PasswordInput from '../Commons/Inputs/PasswordInput';
-import { User } from '../Interfaces/UserInterface';
+import { User, UserRegister } from '../Interfaces/UserInterface';
 import {
   deleteProfileImage,
   updateUserByEmail,
   uploadProfileImage,
   verifyUserPassword,
 } from './../../services/firebase';
-import { UserRegister } from './../../types/User';
 
 //Min and Max Dates
 const today = new Date();

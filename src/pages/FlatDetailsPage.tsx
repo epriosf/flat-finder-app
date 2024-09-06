@@ -1,12 +1,14 @@
+import { Timestamp } from 'firebase/firestore';
+import { Avatar } from 'primereact/avatar';
 import React, { useEffect, useState } from 'react';
 import { Flat } from '../components/Interfaces/FlatInterface';
-import FlatImg from './../images/apt-21.jpg';
-import RoomIcon from './../images/roomIcon.svg';
-import BathroomIcon from './../images/bathroomIcon.svg';
-import { Avatar } from 'primereact/avatar';
-import { getUserByEmail } from '../services/firebase';
 import { User } from '../components/Interfaces/UserInterface'; // Use your custom User interface
-import { Timestamp } from 'firebase/firestore';
+import MessageForm from '../components/Messages/MessageForm';
+import MessageList from '../components/Messages/MessageList';
+import { getUserByEmail } from '../services/firebase';
+import FlatImg from './../images/apt-21.jpg';
+import BathroomIcon from './../images/bathroomIcon.svg';
+import RoomIcon from './../images/roomIcon.svg';
 
 interface FlatDetailsPageProps {
   flat: Flat;
@@ -50,7 +52,7 @@ const FlatDetailsPage: React.FC<FlatDetailsPageProps> = ({ flat }) => {
   }
 
   return (
-    <div>
+    <>
       <div>
         <img
           alt={`${flat.streetNumber} ${flat.streetName}`}
@@ -130,8 +132,18 @@ const FlatDetailsPage: React.FC<FlatDetailsPageProps> = ({ flat }) => {
           </p>
         </div>
       </div>
-    </div>
-    // </div>
+      {/* Messages list */}
+      <MessageList
+        flatId={flat.flatId}
+        userEmail={user!.email}
+        isAdmin={user!.isAdmin}
+      />
+      <MessageForm
+        flatId={flat.flatId}
+        userEmail={user!.email}
+        isAdmin={user!.isAdmin}
+      />
+    </>
   );
 };
 
