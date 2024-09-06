@@ -10,12 +10,12 @@ import { useNavigate } from 'react-router';
 import * as Yup from 'yup';
 import GeneralInput from '../components/Commons/Inputs/GeneralInput';
 import PasswordInput from '../components/Commons/Inputs/PasswordInput';
+import { UserRegister } from '../components/Interfaces/UserInterface';
 import {
   registerUserWithAuth,
   registerUserWithFirestore,
   uploadProfileImage,
 } from '../services/firebase';
-import { UserRegister } from '../types/User';
 
 //Min and Max Dates
 const today = new Date();
