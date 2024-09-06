@@ -34,3 +34,10 @@ export interface UserRegister {
   birthday: Date;
   profile: string;
 }
+
+export interface UserMessage {
+  firstName: string;
+  lastName: string;
+  email: string;
+  profile: string;
+}
