@@ -1,6 +1,6 @@
 import { ConfirmDialog } from 'primereact/confirmdialog';
-import { UserOutput } from '../../types/User';
 import UserCard from '../Commons/Cards/UserCard';
+import { UserOutput } from '../Interfaces/UserInterface';
 
 type UserListProps = {
   users: UserOutput[];

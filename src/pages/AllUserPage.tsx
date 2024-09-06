@@ -1,9 +1,12 @@
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import FilterBy from '../components/Commons/FilterBy/FilterBy';
+import {
+  UserOrderBy,
+  UserOutput,
+} from '../components/Interfaces/UserInterface';
 import UserList from '../components/Users/UserList';
 import { db } from '../config/firebase';
-import { UserOrderBy, UserOutput } from '../types/User';
 import { SortBy } from './../components/Commons/SortBy/SortBy';
 const AllUserPage = () => {
   const [users, setUsers] = useState<UserOutput[]>([]);

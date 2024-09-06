@@ -9,7 +9,7 @@ import {
 import { InputSwitch, InputSwitchChangeEvent } from 'primereact/inputswitch';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { useRef, useState } from 'react';
-import { UserOutput } from '../../../types/User';
+import { UserOutput } from '../../Interfaces/UserInterface';
 import { calculateAge } from '../../Users/UserList';
 
 interface FilterByProps<T> {
