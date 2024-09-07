@@ -11,11 +11,11 @@ const LoginRegister = () => {
           <Image src={LogoWhite} alt="Image" width="150" />
         </div>
         <div
-          className="card flex flex-column justify-content-center w-28rem overflow-scroll h-75 text-500 bg-login border-round-lg pt-5
+          className="card flex flex-column justify-content-center w-28rem overflow-y-scroll h-75 text-500 bg-login border-round-lg pt-5
         "
         >
           <LoginRegisterNavigation />
-          <div className="w-full h-full overflow-y-scroll">
+          <div className="w-full h-full">
             <div className="card flex flex-column justify-content-center w-full p-5 gap-5 text-500">
               <Outlet />
             </div>
