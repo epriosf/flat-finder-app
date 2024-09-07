@@ -27,7 +27,6 @@ const FlatTitle: React.FC<FlatTitleProps> = ({
   }, [sortedFlats]);
 
   useEffect(() => {
-    console.log('Filtered Flats:', filteredFlats); // Debugging: check filtered output
     setFlats(filteredFlats); // Finally set the filtered flats to the parent component
   }, [filteredFlats, setFlats]);
 

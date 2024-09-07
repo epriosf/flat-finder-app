@@ -126,7 +126,7 @@ const FilterByFlats: React.FC<FilterByFlatsProps> = ({
         style={{ width: '300px' }}
         className="filter-panel"
       >
-        <form onSubmit={handleButtonClick} className="loginForm">
+        <form onSubmit={handleButtonClick} className="loginForm text-600">
           <p className="mb-1">
             {/* <i className="pi pi-user pr-2"></i> */}
             City

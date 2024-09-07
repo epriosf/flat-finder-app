@@ -73,7 +73,6 @@ const FlatForm: React.FC<FlatFormProps> = ({
 
   useEffect(() => {
     if (!user) {
-      console.log('User not logged in');
       navigate('/');
     }
   }, [user, navigate]);
@@ -127,13 +126,9 @@ const FlatForm: React.FC<FlatFormProps> = ({
           flatImage: imageUrl,
         };
 
-        console.log('isEditing:', isEditing);
-        console.log('initialFlat.id:', initialFlat?.flatId);
-
         if (isEditing && initialFlat?.flatId) {
           try {
             await updateFlat({ ...flatData, flatId: initialFlat.flatId });
-            console.log('Flat updated successfully. Navigating to home...');
             if (onFormSubmit) {
               onFormSubmit(); // Close the dialog if the function is provided
               window.location.reload(); // Refresh the page when the dialog closes

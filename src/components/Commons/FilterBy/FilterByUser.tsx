@@ -91,7 +91,7 @@ const FilterByUser = <T extends UserRegister>({
         onHide={() => setIsPanelOpen(false)}
         style={{ width: '300px' }}
       >
-        <form onSubmit={handleButtonClick} className="loginForm">
+        <form onSubmit={handleButtonClick} className="loginForm text-600">
           <p className="mb-1">
             {/* <i className="pi pi-user pr-2"></i> */}
             Age Range
