@@ -31,9 +31,13 @@ maxDate.setFullYear(today.getFullYear() - 18);
 const SignupSchema = Yup.object({
   firstName: Yup.string()
     .min(2, 'First Name must be at least 2 characters')
+    .max(20, 'First Name can not be more than 20 characters')
+    .matches(/^[A-Za-z]+$/, 'First Name can only contain letters')
     .required('First Name Required'),
   lastName: Yup.string()
     .min(2, 'Last Name must be at least 2 characters')
+    .max(20, 'First Name can not be more than 20 characters')
+    .matches(/^[A-Za-z]+$/, 'First Name can only contain letters')
     .required('Last Name Required'),
   email: Yup.string().email('Invalid email').required('Email Required'),
   birthday: Yup.date()
