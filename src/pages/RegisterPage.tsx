@@ -4,8 +4,9 @@ import { Calendar } from 'primereact/calendar';
 import { FileUpload, FileUploadHandlerEvent } from 'primereact/fileupload';
 import { FloatLabel } from 'primereact/floatlabel';
 import { Message } from 'primereact/message';
+import { Toast } from 'primereact/toast';
 import { Nullable } from 'primereact/ts-helpers';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import * as Yup from 'yup';
 import GeneralInput from '../components/Commons/Inputs/GeneralInput';
@@ -26,20 +27,34 @@ minDate.setFullYear(today.getFullYear() - 120);
 maxDate.setFullYear(today.getFullYear() - 18);
 
 const SignupSchema = Yup.object({
-  firstName: Yup.string().required('First Name Required'),
-  lastName: Yup.string().required('Last Name Required'),
+  firstName: Yup.string()
+    .min(2, 'First Name must be at least 2 characters')
+    .required('First Name Required'),
+  lastName: Yup.string()
+    .min(2, 'Last Name must be at least 2 characters')
+    .required('Last Name Required'),
   email: Yup.string().email('Invalid email').required('Email Required'),
   birthday: Yup.date()
     .required('Birth Date Required')
-    .min(minDate, 'Date can not be 120 years more ago')
-    .max(maxDate, 'Date can not be more than 18 years ago'),
-  password: Yup.string().required('Password Required'),
+    .min(minDate, 'Date can not be more than 120 years ago')
+    .max(maxDate, 'Date can not be less than 18 years ago'),
+  password: Yup.string()
+    .min(6, 'Password must be at least 6 characters')
+    .matches(/[A-Za-z]/, 'Password must contain at least one letter')
+    .matches(/\d/, 'Password must contain at least one number')
+    .matches(
+      /[^A-Za-z0-9]/,
+      'Password must contain at least one special character',
+    )
+    .required('Password Required'),
   passwordConfirm: Yup.string()
     .oneOf([Yup.ref('password')], 'Passwords must match')
     .required('Password Confirm Required'),
 });
 
 const RegisterPage = () => {
+  const toastCenter = useRef<Toast>(null);
+
   const navigate = useNavigate();
   const [profileFile, setProfileFile] = useState<File | null>(null);
 
@@ -69,6 +84,7 @@ const RegisterPage = () => {
             : new Date(today),
           password: values.password,
           profile: imageUrl,
+          isAdmin: false,
         };
 
         const userCredential = await registerUserWithAuth(
@@ -82,13 +98,29 @@ const RegisterPage = () => {
           password: user.password,
           birthday: user.birthday,
           profile: user.profile,
+          isAdmin: user.isAdmin,
         });
-        console.log('User Register Succesfully');
+        // console.log('User Register Succesfully');
+        toastCenter.current?.show({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'User Registered Successfully',
+          life: 3000,
+        });
+
         resetForm();
         setProfileFile(null);
-        navigate('/login');
+        setTimeout(() => {
+          navigate('/login');
+        }, 3000);
       } catch (error) {
         console.error('Error registering user:', error);
+        toastCenter.current?.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: `Registration Failed. Please try again. ${error}`,
+          life: 3000,
+        });
       }
     },
   });
@@ -105,6 +137,7 @@ const RegisterPage = () => {
 
   return (
     <>
+      <Toast ref={toastCenter} />
       <form id="loginForm" onSubmit={formik.handleSubmit}>
         <GeneralInput
           id="firstName"

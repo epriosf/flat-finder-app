@@ -436,3 +436,32 @@ export const createMessage = async (
     throw error;
   }
 };
+export const deleteUserByEmail = async (email: string) => {
+  try {
+    // Reference to the "users" collection
+    const usersCollectionRef = collection(db, 'users');
+
+    // Query to find the document with the specified email
+    const q = query(usersCollectionRef, where('email', '==', email));
+
+    // Execute the query
+    const querySnapshot = await getDocs(q);
+
+    // Check if a matching document was found
+    if (querySnapshot.empty) {
+      throw new Error('User not found with the provided email.');
+    }
+
+    // Assuming emails are unique, we should only have one document
+    const userDoc = querySnapshot.docs[0];
+    const userDocRef = doc(db, 'users', userDoc.id);
+
+    // Delete the user document
+    await deleteDoc(userDocRef);
+
+    console.log('User deleted successfully');
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    throw error;
+  }
+};

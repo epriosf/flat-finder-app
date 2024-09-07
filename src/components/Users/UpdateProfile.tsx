@@ -12,9 +12,10 @@ import * as Yup from 'yup';
 import { Image } from 'primereact/image';
 
 import { Nullable } from 'primereact/ts-helpers';
+import { useLocation, useNavigate } from 'react-router-dom';
 import GeneralInput from '../Commons/Inputs/GeneralInput';
 import PasswordInput from '../Commons/Inputs/PasswordInput';
-import { User, UserRegister } from '../Interfaces/UserInterface';
+import { UserRegister } from '../Interfaces/UserInterface';
 import {
   deleteProfileImage,
   updateUserByEmail,
@@ -37,12 +38,12 @@ const SignupSchema = Yup.object({
   birthday: Yup.date()
     .required('Birth Date Required')
     .min(minDate, 'Date can not be 120 years more ago')
-    .max(maxDate, 'Date can not be more than 18 years ago'),
+    .max(maxDate, 'Date can not be less than 18 years ago'),
   password: Yup.string().required('Password Required'),
 });
 
 interface UpdatePofileProps {
-  userUpdate?: User;
+  userUpdate?: UserRegister;
   isAdminister?: boolean;
   onClose: () => void;
 }
@@ -54,6 +55,8 @@ const UpdateProfile = ({
 }: UpdatePofileProps) => {
   const [profileFile, setProfileFile] = useState<File | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const formik = useFormik({
     initialValues: {
@@ -91,13 +94,22 @@ const UpdateProfile = ({
           birthday: values.birthday ? values.birthday : new Date(today),
           password: values.password,
           profile: imageUrl,
+          isAdmin: isAdminister,
         };
 
         const verified = await verifyUserPassword(user.email, user.password);
         if (verified) {
           await updateUserByEmail(userUpdate!.email, user);
           onClose();
-          window.location.reload();
+          const currentPath = location.pathname;
+
+          if (currentPath.includes('/profile')) {
+            // Navigate to '/home'
+            navigate('/home');
+          } else if (currentPath.includes('/all-users')) {
+            // Reload the page
+            window.location.reload();
+          }
         } else {
           setPasswordError('Password is incorrect');
         }

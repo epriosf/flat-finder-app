@@ -1,37 +1,45 @@
 import { Avatar } from 'primereact/avatar';
 import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
+import { Dialog } from 'primereact/dialog';
+import { useState } from 'react';
+import { UserRegister } from '../../Interfaces/UserInterface';
+import UpdateProfile from '../../Users/UpdateProfile';
 interface UserCardProps {
-  image: string;
-  name: string;
-  lastname: string;
+  user: UserRegister;
   age: number;
-  email: string;
   birthday: string;
   flatsNumber: number;
-  isAdmin: boolean;
+  onToggleAdmin: () => void; //
+  onDeleteUser: () => void;
 }
 const UserCard: React.FC<UserCardProps> = ({
-  image,
-  name,
-  lastname,
+  user,
   age,
-  email,
   birthday,
   flatsNumber,
-  isAdmin,
+  onToggleAdmin,
+  onDeleteUser,
 }) => {
-  const handleEditClick = () => {};
+  const [dialogVisible, setDialogVisible] = useState<boolean>(false);
+
+  const handleDialogClose = () => {
+    setDialogVisible(false);
+  };
+  const handleEditClick = () => {
+    setDialogVisible(true);
+  };
+
   const header = (
     <div className="flex gap-3 align-items-center md:w-25rem mb-0">
       <Avatar
-        image={image}
+        image={user.profile}
         size="xlarge"
         shape="circle"
         className="my-3 ml-3"
       />
       <p>
-        {name} {lastname}
+        {user.firstName} {user.lastName}
       </p>
 
       <Button
@@ -53,12 +61,14 @@ const UserCard: React.FC<UserCardProps> = ({
           label="Toggle Admin"
           icon="pi pi-user-edit"
           className="w-full md:w-6 bg-indigo-400"
+          onClick={onToggleAdmin}
         />
         <Button
           label="Remove User"
           severity="secondary"
           icon="pi pi-trash"
           className="w-full md:w-6 bg-indigo-200 text-indigo-800"
+          onClick={onDeleteUser}
         />
       </div>
     </>
@@ -79,7 +89,7 @@ const UserCard: React.FC<UserCardProps> = ({
         <p>
           <i className="pi pi-at"></i>
           <span className="font-semibold"> Email:</span>
-          {email}
+          {user.email}
         </p>
         <p>
           <i className="pi pi-calendar-clock"></i>
@@ -93,12 +103,28 @@ const UserCard: React.FC<UserCardProps> = ({
         </p>
         <p>
           <span
-            className={`border-1 border-round-xl border-300 border-indigo-300 p-2 ${isAdmin ? 'bg-indigo-100' : 'bg-indigo-50'}`}
+            className={`border-1 border-round-xl border-300 border-indigo-300 p-2 ${user.isAdmin ? 'bg-indigo-100' : 'bg-indigo-50'}`}
           >
-            {isAdmin ? 'Is Admin' : 'Not Admin'}
+            {user.isAdmin ? 'Is Admin' : 'Not Admin'}
           </span>
         </p>
       </Card>
+      <Dialog
+        header="Edit User"
+        visible={dialogVisible}
+        style={{ width: '50vw' }}
+        onHide={handleDialogClose}
+      >
+        {user ? (
+          <UpdateProfile
+            userUpdate={user}
+            isAdminister={user.isAdmin}
+            onClose={handleDialogClose}
+          />
+        ) : (
+          <div>Loading...</div>
+        )}{' '}
+      </Dialog>
     </>
   );
 };
