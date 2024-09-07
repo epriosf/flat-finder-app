@@ -1,5 +1,6 @@
 import { ConfirmDialog } from 'primereact/confirmdialog';
-import { useState } from 'react';
+import { Toast } from 'primereact/toast';
+import { useRef, useState } from 'react';
 import { deleteUserByEmail, updateUserByEmail } from '../../services/firebase';
 import UserCard from '../Commons/Cards/UserCard';
 import { UserRegister } from '../Interfaces/UserInterface';
@@ -10,6 +11,8 @@ type UserListProps = {
 };
 
 const UserList: React.FC<UserListProps> = ({ users, flatsCount }) => {
+  const toastCenter = useRef<Toast>(null);
+
   const [confirmDialogVisible, setConfirmDialogVisible] = useState(false);
   const [confirmDeleteDialogVisible, setConfirmDeleteDialogVisible] =
     useState(false);
@@ -34,12 +37,26 @@ const UserList: React.FC<UserListProps> = ({ users, flatsCount }) => {
         await updateUserByEmail(selectedUserForAdminToggle.email, {
           isAdmin: !selectedUserForAdminToggle.isAdmin,
         });
-        window.location.reload();
+        toastCenter.current?.show({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Admin status toggle Successfully',
+          life: 2000,
+        });
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
         console.log(
           `Admin status toggled for user with email ${selectedUserForAdminToggle.email}`,
         );
         // Update the UI or state here instead of reloading the page
       } catch (error) {
+        toastCenter.current?.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: `Error toggling admin status. ${error}`,
+          life: 2000,
+        });
         console.error('Error toggling admin status:', error);
       }
       setConfirmDialogVisible(false);
@@ -50,12 +67,25 @@ const UserList: React.FC<UserListProps> = ({ users, flatsCount }) => {
     if (selectedUserForDelete) {
       try {
         await deleteUserByEmail(selectedUserForDelete.email);
-        window.location.reload();
+        toastCenter.current?.show({
+          severity: 'success',
+          summary: 'Success',
+          detail: `User with email ${selectedUserForDelete.email} deleted successfully`,
+          life: 2000,
+        });
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
         console.log(
           `User with email ${selectedUserForDelete.email} deleted successfully`,
         );
-        // Update the UI or state here instead of reloading the page
       } catch (error) {
+        toastCenter.current?.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: `Error deleting user. ${error}`,
+          life: 2000,
+        });
         console.error('Error deleting user:', error);
       }
       setConfirmDeleteDialogVisible(false);
@@ -68,49 +98,54 @@ const UserList: React.FC<UserListProps> = ({ users, flatsCount }) => {
   };
 
   return (
-    <div className="grid">
-      {users.map((user, index) => (
-        <div
-          key={index}
-          className="col-12 xl:col-4 lg:col-4 md:col-6 sm:col-12"
-        >
-          <UserCard
-            user={user}
-            age={calculateAge(user.birthday)}
-            birthday={
-              user.birthday ? user.birthday.toLocaleDateString('en-GB') : 'N/A'
-            }
-            flatsNumber={flatsCount[user.email] || 0}
-            onToggleAdmin={() => handleToggleAdmin(user)}
-            onDeleteUser={() => handleDeleteUser(user)}
+    <>
+      <Toast ref={toastCenter} />
+      <div className="grid">
+        {users.map((user, index) => (
+          <div
+            key={index}
+            className="col-12 xl:col-4 lg:col-4 md:col-6 sm:col-12"
+          >
+            <UserCard
+              user={user}
+              age={calculateAge(user.birthday)}
+              birthday={
+                user.birthday
+                  ? user.birthday.toLocaleDateString('en-GB')
+                  : 'N/A'
+              }
+              flatsNumber={flatsCount[user.email] || 0}
+              onToggleAdmin={() => handleToggleAdmin(user)}
+              onDeleteUser={() => handleDeleteUser(user)}
+            />
+          </div>
+        ))}
+        {selectedUserForAdminToggle && (
+          <ConfirmDialog
+            visible={confirmDialogVisible}
+            onHide={handleCancel}
+            message="Are you sure you want to toggle the admin status of this user?"
+            header="Confirmation"
+            icon="pi pi-exclamation-triangle"
+            acceptClassName="p-button-danger"
+            accept={handleConfirmToggleAdmin}
+            reject={handleCancel}
           />
-        </div>
-      ))}
-      {selectedUserForAdminToggle && (
-        <ConfirmDialog
-          visible={confirmDialogVisible}
-          onHide={handleCancel}
-          message="Are you sure you want to toggle the admin status of this user?"
-          header="Confirmation"
-          icon="pi pi-exclamation-triangle"
-          acceptClassName="p-button-danger"
-          accept={handleConfirmToggleAdmin}
-          reject={handleCancel}
-        />
-      )}
-      {selectedUserForDelete && (
-        <ConfirmDialog
-          visible={confirmDeleteDialogVisible}
-          onHide={handleCancel}
-          message="Are you sure you want to delete the user?"
-          header="Confirmation"
-          icon="pi pi-exclamation-triangle"
-          acceptClassName="p-button-danger"
-          accept={handleConfirmDeleteUser}
-          reject={handleCancel}
-        />
-      )}
-    </div>
+        )}
+        {selectedUserForDelete && (
+          <ConfirmDialog
+            visible={confirmDeleteDialogVisible}
+            onHide={handleCancel}
+            message="Are you sure you want to delete the user?"
+            header="Confirmation"
+            icon="pi pi-exclamation-triangle"
+            acceptClassName="p-button-danger"
+            accept={handleConfirmDeleteUser}
+            reject={handleCancel}
+          />
+        )}
+      </div>
+    </>
   );
 };
 
