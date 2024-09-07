@@ -7,6 +7,7 @@ import { getFlats } from '../services/firebase';
 
 const HomePage = () => {
   const [flats, setFlats] = useState<Flat[]>([]);
+  const [filteredFlats, setFilteredFlats] = useState<Flat[]>([]); // State for filtered flats
   const [first, setFirst] = useState<number>(0);
   const [rows, setRows] = useState<number>(9);
 
@@ -14,40 +15,50 @@ const HomePage = () => {
     const fetchData = async () => {
       const data = await getFlats();
       setFlats(data as Flat[]);
+      setFilteredFlats(data as Flat[]); // Initialize with full data set
     };
     fetchData();
   }, []);
 
-  // Scroll to top whenever the page changes
-  // useEffect(() => {
-  //   window.scrollTo({ top: 0, behavior: 'smooth' });
-  // }, [first]);
-
+  // Update the flats list after pagination change
   const onPageChange = (event: PaginatorPageChangeEvent) => {
     setFirst(event.first);
     setRows(event.rows);
-
-    // Try a basic scroll to the top
-    window.scrollTo(0, 0);
+    window.scrollTo(0, 0); // Scroll to the top on page change
   };
 
+  // Handle flat deletion and update the flats list accordingly
   const handleFlatDeleted = (deletedFlatId: string) => {
-    setFlats(flats.filter((flat) => flat.flatId !== deletedFlatId));
+    setFilteredFlats(
+      filteredFlats.filter((flat) => flat.flatId !== deletedFlatId),
+    );
   };
 
-  const currentFlats = flats.slice(first, first + rows);
+  // Slice the list of flats for pagination
+  const currentFlats = filteredFlats.slice(first, first + rows);
+
   return (
     <>
-      <FlatTitle title="Home" />
+      {/* FlatTitle with FilterByFlats and SortByFlats */}
+      <FlatTitle
+        title="Home"
+        originalFlats={flats} // Pass the original flats for sorting and filtering
+        setFlats={setFilteredFlats} // Pass the setter for updating filtered flats
+      />
+
+      {/* List of filtered flats */}
       <FlatList flats={currentFlats} onFlatDeleted={handleFlatDeleted} />
+
+      {/* Pagination component */}
       <Paginator
         first={first}
         rows={rows}
-        totalRecords={flats.length}
+        totalRecords={filteredFlats.length} // Paginate based on filtered flats
         rowsPerPageOptions={[9, 12, 15, 18]}
         onPageChange={onPageChange}
       />
     </>
   );
 };
+
 export default HomePage;

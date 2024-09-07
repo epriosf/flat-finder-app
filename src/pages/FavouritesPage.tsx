@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { collection, query, where, getDocs } from 'firebase/firestore';
-import FlatList from '../components/Flats/FlatList'; // Use FlatList instead of FlatItem
+import FlatList from '../components/Flats/FlatList';
 import { useAuth } from '../hooks/useAuth';
 import { db } from '../config/firebase';
 import { Flat } from '../components/Interfaces/FlatInterface';
@@ -9,6 +9,7 @@ import FlatTitle from '../components/Flats/FlatTitle';
 const FavouritesPage: React.FC = () => {
   const { user: loggedUser } = useAuth();
   const [favoriteFlats, setFavoriteFlats] = useState<Flat[]>([]);
+  const [filteredFlats, setFilteredFlats] = useState<Flat[]>([]); // Track filtered flats
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -39,6 +40,7 @@ const FavouritesPage: React.FC = () => {
               });
 
               setFavoriteFlats(flats);
+              setFilteredFlats(flats); // Initialize filteredFlats with the favorite flats
             }
           }
         } catch (error) {
@@ -58,11 +60,18 @@ const FavouritesPage: React.FC = () => {
       setFavoriteFlats((prevFlats) =>
         prevFlats.filter((flat) => flat.flatId !== flatId),
       );
+      setFilteredFlats((prevFlats) =>
+        prevFlats.filter((flat) => flat.flatId !== flatId),
+      );
     }
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <i className="pi pi-spin pi-spinner"></i> Loading...
+      </div>
+    );
   }
 
   if (!loggedUser) {
@@ -71,12 +80,22 @@ const FavouritesPage: React.FC = () => {
 
   return (
     <div className="favourites-page">
-      <FlatTitle title="My Favorite Flats" />{' '}
-      {favoriteFlats.length > 0 ? (
+      {/* FlatTitle with sorting and filtering */}
+      <FlatTitle
+        title="My Favorite Flats"
+        originalFlats={favoriteFlats} // Pass the original favorite flats
+        setFlats={setFilteredFlats} // Update the filtered flats after sort/filter
+      />
+
+      {/* Display the list of filtered favorite flats */}
+      {filteredFlats.length > 0 ? (
         <FlatList
-          flats={favoriteFlats}
+          flats={filteredFlats} // Use the filtered flats for display
           onFlatDeleted={(flatId) => {
             setFavoriteFlats((prevFlats) =>
+              prevFlats.filter((flat) => flat.flatId !== flatId),
+            );
+            setFilteredFlats((prevFlats) =>
               prevFlats.filter((flat) => flat.flatId !== flatId),
             );
           }}

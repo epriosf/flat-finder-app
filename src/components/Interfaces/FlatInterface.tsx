@@ -18,3 +18,16 @@ export interface Flat {
   rooms: number | null;
   bathrooms: number | null;
 }
+
+// export interface FlatFilter {
+//   flatId: string;
+//   areaSize: number | null; // Allow null if your data can have null values
+//   city: string | null;
+//   price: number | null;
+// }
+
+export interface FlatOrderBy {
+  city: string;
+  price: number;
+  area: number;
+}

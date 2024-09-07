@@ -15,7 +15,7 @@ interface JustifyOption {
   icon: string;
   value: 'asc' | 'desc';
 }
-export const SortBy = <T extends { email: string }>({
+export const SortByUser = <T extends { email: string }>({
   items,
   setItems,
   keys,
@@ -63,9 +63,9 @@ export const SortBy = <T extends { email: string }>({
         icon="pi pi-sort-alt"
         onClick={(e) => op.current?.toggle(e)}
       />
-      <OverlayPanel ref={op}>
+      <OverlayPanel ref={op} style={{ width: '20em' }}>
         {keys.map((key, index) => (
-          <div key={index}>
+          <div className="flex justify-content-between" key={index}>
             <p>
               <i
                 className={`pi pi-${key === 'flatsCount' ? 'hashtag' : 'user'} pr-2`}

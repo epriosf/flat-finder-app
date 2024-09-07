@@ -1,5 +1,4 @@
 import { Button } from 'primereact/button';
-import { FloatLabel } from 'primereact/floatlabel';
 import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import {
@@ -18,7 +17,7 @@ interface FilterByProps<T> {
   flatsCount?: Record<string, number>;
 }
 
-const FilterBy = <T extends UserOutput>({
+const FilterByUser = <T extends UserOutput>({
   setItems,
   originalItems,
   flatsCount,
@@ -93,12 +92,12 @@ const FilterBy = <T extends UserOutput>({
         style={{ width: '300px' }}
       >
         <form onSubmit={handleButtonClick} className="loginForm">
-          <p>
-            <i className="pi pi-user pr-2"></i>
+          <p className="mb-1">
+            {/* <i className="pi pi-user pr-2"></i> */}
             Age Range
           </p>
-          <FloatLabel>
-            <IconField iconPosition="left">
+          <div className="flex justify-content-between gap-2 w-full filter-input">
+            <IconField iconPosition="left" className="w-full">
               <InputIcon className="pi pi-user" />
               <InputNumber
                 id="minNumber-input"
@@ -107,13 +106,8 @@ const FilterBy = <T extends UserOutput>({
                 className="w-full left-3"
               />
             </IconField>
-            <label htmlFor="minNumber-input" className="left-3 text-400">
-              Min
-            </label>
-          </FloatLabel>
 
-          <FloatLabel>
-            <IconField iconPosition="left">
+            <IconField iconPosition="left" className="w-full">
               <InputIcon className="pi pi-user" />
               <InputNumber
                 id="maxNumber-input"
@@ -122,16 +116,13 @@ const FilterBy = <T extends UserOutput>({
                 className="w-full left-3"
               />
             </IconField>
-            <label htmlFor="maxNumber-input" className="left-3 text-400">
-              Max
-            </label>
-          </FloatLabel>
-          <p>
-            <i className="pi pi-user pr-2"></i>
+          </div>
+          <p className="mb-1">
+            {/* <i className="pi pi-user pr-2"></i> */}
             Flats Range
           </p>
-          <FloatLabel>
-            <IconField iconPosition="left">
+          <div className="flex justify-content-between gap-2 w-full filter-input">
+            <IconField iconPosition="left" className="w-full">
               <InputIcon className="pi pi-hashtag" />
               <InputNumber
                 id="minFlats-input"
@@ -140,10 +131,8 @@ const FilterBy = <T extends UserOutput>({
                 className="w-full"
               />
             </IconField>
-            <label htmlFor="minFlats-input">Min</label>
-          </FloatLabel>
-          <FloatLabel>
-            <IconField iconPosition="left">
+
+            <IconField iconPosition="left" className="w-full">
               <InputIcon className="pi pi-hashtag" />
               <InputNumber
                 id="maxFlats-input"
@@ -152,9 +141,7 @@ const FilterBy = <T extends UserOutput>({
                 className="w-full"
               />
             </IconField>
-            <label htmlFor="maxFlats-input">Max</label>
-          </FloatLabel>
-
+          </div>
           <div className="flex align-items-center mt-3">
             <InputSwitch
               checked={isAdmin}
@@ -163,10 +150,10 @@ const FilterBy = <T extends UserOutput>({
             />
             <span>Is Admin</span>
           </div>
-          <Button label="Filter" className="w-full mt-5" type="submit" />
+          <Button label="Filter" className="w-full mt-3" type="submit" />
           <Button
             label="Clear Filter"
-            className="w-full mt-5"
+            className="w-full mt-2"
             onClick={clearFilterForm}
             type="button"
           />
@@ -176,4 +163,4 @@ const FilterBy = <T extends UserOutput>({
   );
 };
 
-export default FilterBy;
+export default FilterByUser;
