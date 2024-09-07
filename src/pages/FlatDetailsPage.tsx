@@ -1,10 +1,12 @@
 import { Timestamp } from 'firebase/firestore';
 import { Avatar } from 'primereact/avatar';
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { Flat } from '../components/Interfaces/FlatInterface';
 import { User } from '../components/Interfaces/UserInterface'; // Use your custom User interface
 import MessageForm from '../components/Messages/MessageForm';
 import MessageList from '../components/Messages/MessageList';
+import { useAuth } from '../hooks/useAuth';
 import { getUserByEmail } from '../services/firebase';
 import FlatImg from './../images/apt-21.jpg';
 import BathroomIcon from './../images/bathroomIcon.svg';
@@ -15,19 +17,35 @@ interface FlatDetailsPageProps {
 }
 
 const FlatDetailsPage: React.FC<FlatDetailsPageProps> = ({ flat }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [userF, setUserF] = useState<User | null>(null);
+  const [loadingF, setLoadingF] = useState(true);
+  const { user, loading } = useAuth(); // Assume `useAuth` provides `isLoading`
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate('/login');
+    }
+  }, [user, loading, navigate]);
+
+  if (loading) {
+    return (
+      <div>
+        <i className="pi pi-spin pi-spinner"></i> Loading...
+      </div>
+    );
+  }
 
   // Fetch the user data related to the flat
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const fetchedUser = await getUserByEmail(flat.flatUser);
-        setUser(fetchedUser.length > 0 ? fetchedUser[0] : null); // Use your custom User type here
+        setUserF(fetchedUser.length > 0 ? fetchedUser[0] : null); // Use your custom User type here
       } catch (error) {
         console.error('Failed to fetch user:', error);
       } finally {
-        setLoading(false);
+        setLoadingF(false);
       }
     };
     fetchUser();
@@ -47,7 +65,7 @@ const FlatDetailsPage: React.FC<FlatDetailsPageProps> = ({ flat }) => {
     ? formatDate(flat.dateAvailable)
     : 'N/A';
 
-  if (loading) {
+  if (loadingF) {
     return (
       <div>
         <i className="pi pi-spin pi-spinner"></i> Loading...
@@ -74,20 +92,20 @@ const FlatDetailsPage: React.FC<FlatDetailsPageProps> = ({ flat }) => {
         </div>
 
         {/* owner */}
-        {user && (
+        {userF && (
           <div className="mt-4 flex gap-2 align-items-center">
             <Avatar
-              image={user.profile}
-              imageAlt={`${user.firstName} ${user.lastName}`}
+              image={userF.profile}
+              imageAlt={`${userF.firstName} ${userF.lastName}`}
               className="mr-2"
               size="large"
               shape="circle"
             />
             <div>
               <p className="text-600 m-0">
-                Listed by {user.firstName} {user.lastName}
+                Listed by {userF.firstName} {userF.lastName}
               </p>
-              <p className="text-600 m-0">{user.email}</p>
+              <p className="text-600 m-0">{userF.email}</p>
             </div>
           </div>
         )}
