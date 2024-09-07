@@ -48,7 +48,11 @@ const FlatDetailsPage: React.FC<FlatDetailsPageProps> = ({ flat }) => {
     : 'N/A';
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <i className="pi pi-spin pi-spinner"></i> Loading...
+      </div>
+    );
   }
 
   return (

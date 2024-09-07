@@ -12,7 +12,12 @@ const MessageList: React.FC<MessagesListProps> = ({
 }) => {
   const { messages, loading, error } = useMessage(flatId);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading)
+    return (
+      <div>
+        <i className="pi pi-spin pi-spinner"></i> Loading...
+      </div>
+    );
   if (error) return <div>Error: {error}</div>;
 
   const filteredMessages = isAdmin
