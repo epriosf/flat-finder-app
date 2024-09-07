@@ -33,6 +33,7 @@ export interface UserRegister {
   password: string;
   birthday: Date;
   profile: string;
+  isAdmin: boolean;
 }
 
 export interface UserMessage {

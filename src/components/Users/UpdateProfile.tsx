@@ -37,7 +37,7 @@ const SignupSchema = Yup.object({
   birthday: Yup.date()
     .required('Birth Date Required')
     .min(minDate, 'Date can not be 120 years more ago')
-    .max(maxDate, 'Date can not be more than 18 years ago'),
+    .max(maxDate, 'Date can not be less than 18 years ago'),
   password: Yup.string().required('Password Required'),
 });
 
@@ -91,6 +91,7 @@ const UpdateProfile = ({
           birthday: values.birthday ? values.birthday : new Date(today),
           password: values.password,
           profile: imageUrl,
+          isAdmin: isAdminister,
         };
 
         const verified = await verifyUserPassword(user.email, user.password);

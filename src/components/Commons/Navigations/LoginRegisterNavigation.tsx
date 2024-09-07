@@ -17,7 +17,7 @@ const LoginRegisterNavigation = () => {
       ),
     },
     {
-      label: 'Sign In',
+      label: 'Sign Up',
       template: (item, options) => (
         <NavLink
           to="/register"
