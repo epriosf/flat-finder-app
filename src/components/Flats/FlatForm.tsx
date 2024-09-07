@@ -34,14 +34,18 @@ maxDate.setFullYear(today.getFullYear() + 2);
 // Validation schema for the flat form
 const FlatSchema = Yup.object({
   areaSize: Yup.number().nullable().required('Area Size Required'),
-  city: Yup.string().required('City Required'),
+  city: Yup.string()
+    .min(2, 'City must have at least 2 characters')
+    .required('City Required'),
   dateAvailable: Yup.date()
     .required('Date Available Required')
     .min(minDate, 'Date needs to be in the future')
-    .max(maxDate, 'Date can not be more than 2 years in the future'),
+    .max(maxDate, 'Date cannot be more than 2 years in the future'),
   hasAc: Yup.boolean().required('AC Requirement Required'),
   price: Yup.number().nullable().required('Price Required'),
-  streetName: Yup.string().required('Street Name Required'),
+  streetName: Yup.string()
+    .min(2, 'Street Name must have at least 2 characters')
+    .required('Street Name Required'),
   streetNumber: Yup.number().nullable().required('Street Number Required'),
   yearBuilt: Yup.number()
     .nullable()

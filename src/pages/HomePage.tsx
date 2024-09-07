@@ -50,13 +50,15 @@ const HomePage = () => {
       <FlatList flats={currentFlats} onFlatDeleted={handleFlatDeleted} />
 
       {/* Pagination component */}
-      <Paginator
-        first={first}
-        rows={rows}
-        totalRecords={filteredFlats.length} // Paginate based on filtered flats
-        rowsPerPageOptions={[9, 12, 15, 18]}
-        onPageChange={onPageChange}
-      />
+      {filteredFlats.length > 9 && (
+        <Paginator
+          first={first}
+          rows={rows}
+          totalRecords={filteredFlats.length} // Paginate based on filtered flats
+          rowsPerPageOptions={[9, 12, 15, 18]}
+          onPageChange={onPageChange}
+        />
+      )}
     </>
   );
 };
