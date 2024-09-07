@@ -25,11 +25,13 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
           </span>
           <div className="text-700 mb-2">{message.content}</div>
           <i className="pi pi-envelope text-primary">
-            <span className="ml-2">{message.userEmail}</span>
+            <span className="ml-2" style={{ fontFamily: 'Roboto, sans-serif' }}>
+              {message.userEmail}
+            </span>
           </i>
         </div>
       </div>
-      <span className="block text-500 font-medium ml-7 md:ml-5 mt-2 md:mt-0">
+      <span className="block text-500 font-medium ml-7 md:ml-5 mt-2 md:mt-0 text-sm">
         <ReactTimeAgo date={message.createdAt.toDate()} locale="en" />
       </span>
     </li>

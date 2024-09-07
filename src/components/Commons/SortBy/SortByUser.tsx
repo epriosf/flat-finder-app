@@ -65,7 +65,7 @@ export const SortByUser = <T extends { email: string }>({
       />
       <OverlayPanel ref={op} style={{ width: '20em' }}>
         {keys.map((key, index) => (
-          <div className="flex justify-content-between" key={index}>
+          <div className="flex justify-content-between text-600" key={index}>
             <p>
               <i
                 className={`pi pi-${key === 'flatsCount' ? 'hashtag' : 'user'} pr-2`}

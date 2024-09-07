@@ -58,8 +58,6 @@ export const SortByFlats: React.FC<SortByFlatsProps> = ({
       return 0; // If values are not comparable, return 0
     });
 
-    console.log('Sorted Items:', sortedItems); // Debugging: check sorted output
-
     setItems(sortedItems); // Update the state with sorted flats
   };
 
@@ -88,7 +86,7 @@ export const SortByFlats: React.FC<SortByFlatsProps> = ({
       />
       <OverlayPanel ref={op} style={{ width: '20em' }}>
         {keys.map((key, index) => (
-          <div className="flex justify-content-between" key={index}>
+          <div className="flex justify-content-between text-600" key={index}>
             <p>
               <i
                 className={`pi pi-${getIconForKey(key as keyof Flat)} pr-2`}
@@ -104,6 +102,7 @@ export const SortByFlats: React.FC<SortByFlatsProps> = ({
               }}
               itemTemplate={justifyTemplate}
               options={justifyOptions}
+              className="text-600"
             />
           </div>
         ))}
