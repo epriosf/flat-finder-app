@@ -4,7 +4,7 @@ import { Card } from 'primereact/card';
 import { Dialog } from 'primereact/dialog';
 import { useState } from 'react';
 import { UserRegister } from '../../Interfaces/UserInterface';
-import UpdateProfile from '../../Users/UpdateProfile';
+import UpdateProfileAdmin from '../../Users/UpdateProfileAdmin';
 interface UserCardProps {
   user: UserRegister;
   age: number;
@@ -116,7 +116,7 @@ const UserCard: React.FC<UserCardProps> = ({
         onHide={handleDialogClose}
       >
         {user ? (
-          <UpdateProfile
+          <UpdateProfileAdmin
             userUpdate={user}
             isAdminister={user.isAdmin}
             onClose={handleDialogClose}
