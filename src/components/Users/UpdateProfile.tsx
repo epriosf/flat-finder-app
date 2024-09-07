@@ -14,7 +14,7 @@ import { Image } from 'primereact/image';
 import { Nullable } from 'primereact/ts-helpers';
 import GeneralInput from '../Commons/Inputs/GeneralInput';
 import PasswordInput from '../Commons/Inputs/PasswordInput';
-import { User, UserRegister } from '../Interfaces/UserInterface';
+import { UserRegister } from '../Interfaces/UserInterface';
 import {
   deleteProfileImage,
   updateUserByEmail,
@@ -42,7 +42,7 @@ const SignupSchema = Yup.object({
 });
 
 interface UpdatePofileProps {
-  userUpdate?: User;
+  userUpdate?: UserRegister;
   isAdminister?: boolean;
   onClose: () => void;
 }

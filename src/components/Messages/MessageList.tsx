@@ -19,7 +19,6 @@ const MessageList: React.FC<MessagesListProps> = ({
       </div>
     );
   if (error) return <div>Error: {error}</div>;
-
   const filteredMessages = isAdmin
     ? messages
     : messages.filter((message) => message.userEmail === userEmail);

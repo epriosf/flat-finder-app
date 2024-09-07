@@ -1,16 +1,16 @@
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
+import FilterByUser from '../components/Commons/FilterBy/FilterByUser';
+import { SortByUser } from '../components/Commons/SortBy/SortByUser';
 import {
   UserOrderBy,
-  UserOutput,
+  UserRegister,
 } from '../components/Interfaces/UserInterface';
 import UserList from '../components/Users/UserList';
 import { db } from '../config/firebase';
-import { SortByUser } from '../components/Commons/SortBy/SortByUser';
-import FilterByUser from '../components/Commons/FilterBy/FilterByUser';
 const AllUserPage = () => {
-  const [users, setUsers] = useState<UserOutput[]>([]);
-  const [originalUsers, setOriginalUsers] = useState<UserOutput[]>([]);
+  const [users, setUsers] = useState<UserRegister[]>([]);
+  const [originalUsers, setOriginalUsers] = useState<UserRegister[]>([]);
   const [flatsCount, setFlatsCount] = useState<{ [key: string]: number }>({});
 
   useEffect(() => {
@@ -28,7 +28,7 @@ const AllUserPage = () => {
             birthday: data.birthday ? data.birthday.toDate() : null,
             profile: data.profile,
             isAdmin: data.isAdmin,
-          } as UserOutput;
+          } as UserRegister;
         });
         setUsers(usersList);
         setOriginalUsers(usersList);

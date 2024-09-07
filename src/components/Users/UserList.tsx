@@ -1,9 +1,9 @@
 import { ConfirmDialog } from 'primereact/confirmdialog';
 import UserCard from '../Commons/Cards/UserCard';
-import { UserOutput } from '../Interfaces/UserInterface';
+import { UserRegister } from '../Interfaces/UserInterface';
 
 type UserListProps = {
-  users: UserOutput[];
+  users: UserRegister[];
   flatsCount: { [key: string]: number };
 };
 const UserList: React.FC<UserListProps> = ({ users, flatsCount }) => {
@@ -15,16 +15,12 @@ const UserList: React.FC<UserListProps> = ({ users, flatsCount }) => {
           className="col-12 xl:col-4 lg:col-4 md:col-6 sm:col-12"
         >
           <UserCard
-            image={user.profile}
-            name={user.firstName}
-            lastname={user.lastName}
+            user={user}
             age={calculateAge(user.birthday)}
-            email={user.email}
             birthday={
               user.birthday ? user.birthday.toLocaleDateString('en-GB') : 'N/A'
             }
             flatsNumber={flatsCount[user.email] || 0}
-            isAdmin={user.isAdmin}
           />
         </div>
       ))}
