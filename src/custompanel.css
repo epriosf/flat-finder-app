@@ -1,7 +1,7 @@
 /* Custom classes */
 
 .left-3 {
-  left: 3rem;
+  left: 3rem !important;
 }
 .h-75 {
   height: 75vh;
@@ -204,4 +204,7 @@ li.p-tabmenuitem.p-highlight {
 
 .filter-panel {
   top: 170px;
+}
+.p-inputnumber input {
+  padding-left: 2.5rem !important;
 }

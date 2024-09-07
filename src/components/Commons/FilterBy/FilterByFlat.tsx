@@ -24,6 +24,10 @@ const FilterByFlats: React.FC<FilterByFlatsProps> = ({
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [minArea, setMinArea] = useState<number | null>(null);
   const [maxArea, setMaxArea] = useState<number | null>(null);
+  const [minRooms, setMinRooms] = useState<number | null>(null);
+  const [maxRooms, setMaxRooms] = useState<number | null>(null);
+  const [minBathrooms, setMinBathrooms] = useState<number | null>(null);
+  const [maxBathrooms, setMaxBathrooms] = useState<number | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
 
   const op = useRef<OverlayPanel>(null);
@@ -42,6 +46,18 @@ const FilterByFlats: React.FC<FilterByFlatsProps> = ({
   const handleMaxAreaValueChange = (e: InputNumberValueChangeEvent) => {
     setMaxArea(e.value !== undefined ? e.value : null);
   };
+  const handleMinRoomsValueChange = (e: InputNumberValueChangeEvent) => {
+    setMinRooms(e.value !== undefined ? e.value : null);
+  };
+  const handleMaxRoomsValueChange = (e: InputNumberValueChangeEvent) => {
+    setMaxRooms(e.value !== undefined ? e.value : null);
+  };
+  const handleMinBathroomsValueChange = (e: InputNumberValueChangeEvent) => {
+    setMinBathrooms(e.value !== undefined ? e.value : null);
+  };
+  const handleMaxBathroomsValueChange = (e: InputNumberValueChangeEvent) => {
+    setMaxBathrooms(e.value !== undefined ? e.value : null);
+  };
   const handleButtonClick = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     let filteredFlats = originalFlats.filter((flat) => {
@@ -57,7 +73,23 @@ const FilterByFlats: React.FC<FilterByFlatsProps> = ({
         (maxArea == null ||
           (flat.areaSize != null && flat.areaSize <= maxArea));
 
-      return cityCondition && priceCondition && areaCondition;
+      const roomsCondition =
+        (minRooms == null || (flat.rooms != null && flat.rooms >= minRooms)) &&
+        (maxRooms == null || (flat.rooms != null && flat.rooms <= maxRooms));
+
+      const bathroomsCondition =
+        (minBathrooms == null ||
+          (flat.bathrooms != null && flat.bathrooms >= minBathrooms)) &&
+        (maxBathrooms == null ||
+          (flat.bathrooms != null && flat.bathrooms <= maxBathrooms));
+
+      return (
+        cityCondition &&
+        priceCondition &&
+        areaCondition &&
+        roomsCondition &&
+        bathroomsCondition
+      );
     });
 
     setFilteredFlats(filteredFlats);
@@ -115,7 +147,7 @@ const FilterByFlats: React.FC<FilterByFlatsProps> = ({
           </p>
           <div className="flex justify-content-between gap-2 w-full filter-input">
             <IconField iconPosition="left" className="w-full">
-              <InputIcon className="pi pi-user" />
+              <InputIcon className="pi pi-dollar" />
               <InputNumber
                 id="minPrice-input"
                 value={minPrice ?? null}
@@ -125,7 +157,7 @@ const FilterByFlats: React.FC<FilterByFlatsProps> = ({
             </IconField>
 
             <IconField iconPosition="left" className="w-full">
-              <InputIcon className="pi pi-map-marker" />
+              <InputIcon className="pi pi-dollar" />
               <InputNumber
                 id="maxPrice-input"
                 value={maxPrice ?? null}
@@ -156,6 +188,57 @@ const FilterByFlats: React.FC<FilterByFlatsProps> = ({
                 id="maxArea-input"
                 value={maxArea ?? null}
                 onValueChange={handleMaxAreaValueChange}
+                className="w-full"
+              />
+            </IconField>
+          </div>
+
+          <p className="mb-1">
+            {/* <i className="pi pi-user pr-2"></i> */}
+            Rooms Range
+          </p>
+          <div className="flex justify-content-between gap-2 w-full filter-input">
+            <IconField iconPosition="left">
+              <InputIcon className="pi pi-building" />
+              <InputNumber
+                id="minRooms-input"
+                value={minRooms ?? null}
+                onValueChange={handleMinRoomsValueChange}
+                className="w-full"
+              />
+            </IconField>
+
+            <IconField iconPosition="left">
+              <InputIcon className="pi pi-building" />
+              <InputNumber
+                id="maxRooms-input"
+                value={maxRooms ?? null}
+                onValueChange={handleMaxRoomsValueChange}
+                className="w-full"
+              />
+            </IconField>
+          </div>
+          <p className="mb-1">
+            {/* <i className="pi pi-user pr-2"></i> */}
+            Bathrooms Range
+          </p>
+          <div className="flex justify-content-between gap-2 w-full filter-input">
+            <IconField iconPosition="left">
+              <InputIcon className="pi pi-building" />
+              <InputNumber
+                id="minBathrooms-input"
+                value={minBathrooms ?? null}
+                onValueChange={handleMinBathroomsValueChange}
+                className="w-full"
+              />
+            </IconField>
+
+            <IconField iconPosition="left">
+              <InputIcon className="pi pi-building" />
+              <InputNumber
+                id="maxBathrooms-input"
+                value={maxBathrooms ?? null}
+                onValueChange={handleMaxBathroomsValueChange}
                 className="w-full"
               />
             </IconField>

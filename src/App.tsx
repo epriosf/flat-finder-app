@@ -8,26 +8,30 @@ import './custompanel.css';
 import ErrorPage from './pages/ErrorPage';
 import LoginRegister from './pages/LoginRegisterPage';
 import RootLayout from './pages/RootPage';
-// import LoginPage from './pages/LoginPage';
+import { AuthProvider } from './contexts/authContext';
+import PrivateRoute from './components/Path/PrivateRoute';
 
-// Lazy-loaded pages
 const HomePage = lazy(() => import('./pages/HomePage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const FavouritesPage = lazy(() => import('./pages/FavouritesPage'));
 const AllUserPage = lazy(() => import('./pages/AllUserPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
-// const EditFlatPage = lazy(() => import('./pages/EditFlatPage'));
 const MyFlatsPage = lazy(() => import('./pages/MyFlatsPage'));
 const NewFlatPage = lazy(() => import('./pages/NewFlatPage'));
 const RegisterPage = lazy(() => import('./pages/RegisterPage'));
 const UpdateProfilePage = lazy(() => import('./pages/UpdateProfilePage'));
-// const FlatDetailsPage = lazy(() => import('./pages/FlatDetailsPage'));
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: (
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense
+        fallback={
+          <div>
+            <i className="pi pi-spin pi-spinner"></i> Loading...
+          </div>
+        }
+      >
         <LoginRegister />
       </Suspense>
     ),
@@ -40,7 +44,13 @@ const router = createBrowserRouter([
       {
         path: 'login',
         element: (
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense
+            fallback={
+              <div>
+                <i className="pi pi-spin pi-spinner"></i> Loading...
+              </div>
+            }
+          >
             <LoginPage />
           </Suspense>
         ),
@@ -48,7 +58,13 @@ const router = createBrowserRouter([
       {
         path: 'register',
         element: (
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense
+            fallback={
+              <div>
+                <i className="pi pi-spin pi-spinner"></i> Loading...
+              </div>
+            }
+          >
             <RegisterPage />
           </Suspense>
         ),
@@ -58,7 +74,13 @@ const router = createBrowserRouter([
   {
     path: '/home/',
     element: (
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense
+        fallback={
+          <div>
+            <i className="pi pi-spin pi-spinner"></i> Loading...
+          </div>
+        }
+      >
         <RootLayout />
       </Suspense>
     ),
@@ -67,85 +89,69 @@ const router = createBrowserRouter([
       {
         path: '',
         element: (
-          <Suspense fallback={<div>Loading...</div>}>
+          <PrivateRoute>
             <HomePage />
-          </Suspense>
+          </PrivateRoute>
         ),
       },
-
       {
         path: 'favorites',
         element: (
-          <Suspense fallback={<div>Loading...</div>}>
+          <PrivateRoute>
             <FavouritesPage />
-          </Suspense>
+          </PrivateRoute>
         ),
       },
       {
         path: 'all-users',
         element: (
-          <Suspense fallback={<div>Loading...</div>}>
+          <PrivateRoute>
             <AllUserPage />
-          </Suspense>
+          </PrivateRoute>
         ),
       },
-      // {
-      //   path: 'edit-flat',
-      //   element: (
-      //     <Suspense fallback={<div>Loading...</div>}>
-      //       <EditFlatPage flat={null} />
-      //     </Suspense>
-      //   ),
-      // },
       {
         path: 'profile',
         element: (
-          <Suspense fallback={<div>Loading...</div>}>
+          <PrivateRoute>
             <ProfilePage />
-          </Suspense>
+          </PrivateRoute>
         ),
       },
       {
         path: 'my-flats',
         element: (
-          <Suspense fallback={<div>Loading...</div>}>
+          <PrivateRoute>
             <MyFlatsPage />
-          </Suspense>
+          </PrivateRoute>
         ),
       },
       {
         path: 'new-flat',
         element: (
-          <Suspense fallback={<div>Loading...</div>}>
+          <PrivateRoute>
             <NewFlatPage />
-          </Suspense>
+          </PrivateRoute>
         ),
       },
       {
         path: 'update-profile',
         element: (
-          <Suspense fallback={<div>Loading...</div>}>
+          <PrivateRoute>
             <UpdateProfilePage />
-          </Suspense>
+          </PrivateRoute>
         ),
       },
-      // {
-      //   path: 'flat-details',
-      //   element: (
-      //     <Suspense fallback={<div>Loading...</div>}>
-      //       <FlatDetailsPage flat={null} />
-      //     </Suspense>
-      //   ),
-      // },
       { path: '*', element: <ErrorPage /> },
     ],
   },
 ]);
+
 function App() {
   return (
-    <>
+    <AuthProvider>
       <RouterProvider router={router} />
-    </>
+    </AuthProvider>
   );
 }
 
