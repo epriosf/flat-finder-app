@@ -12,15 +12,12 @@ import * as Yup from 'yup';
 import { Image } from 'primereact/image';
 
 import { Nullable } from 'primereact/ts-helpers';
-import { useLocation, useNavigate } from 'react-router-dom';
 import GeneralInput from '../Commons/Inputs/GeneralInput';
-import PasswordInput from '../Commons/Inputs/PasswordInput';
 import { UserRegister } from '../Interfaces/UserInterface';
 import {
   deleteProfileImage,
   updateUserByEmail,
   uploadProfileImage,
-  verifyUserPassword,
 } from './../../services/firebase';
 
 //Min and Max Dates
@@ -45,12 +42,11 @@ const SignupSchema = Yup.object({
   email: Yup.string().email('Invalid email').required('Email Required'),
   birthday: Yup.date()
     .required('Birth Date Required')
-    .min(minDate, 'Date can not be 120 years more ago')
+    .min(minDate, 'Date can not be more than 120 years ago')
     .max(maxDate, 'Date can not be less than 18 years ago'),
-  password: Yup.string().required('Password Required'),
 });
 
-interface UpdatePofileProps {
+interface UpdateProfileProps {
   userUpdate?: UserRegister;
   isAdminister?: boolean;
   onClose: () => void;
@@ -60,11 +56,8 @@ const UpdateProfile = ({
   userUpdate,
   isAdminister = false,
   onClose,
-}: UpdatePofileProps) => {
+}: UpdateProfileProps) => {
   const [profileFile, setProfileFile] = useState<File | null>(null);
-  const [passwordError, setPasswordError] = useState<string | null>(null);
-  const navigate = useNavigate();
-  const location = useLocation();
 
   const formik = useFormik({
     initialValues: {
@@ -76,16 +69,11 @@ const UpdateProfile = ({
           ? userUpdate.birthday.toDate()
           : userUpdate.birthday
         : null,
-      password: '',
       isAdmin: userUpdate?.isAdmin || false,
     },
     validationSchema: SignupSchema,
     onSubmit: async (values) => {
       try {
-        if (!values.password) {
-          setPasswordError('Pasword Required');
-          return;
-        }
         let imageUrl = userUpdate?.profile || '';
 
         if (profileFile) {
@@ -95,35 +83,21 @@ const UpdateProfile = ({
           }
           imageUrl = await uploadProfileImage(profileFile);
         }
-        const user: UserRegister = {
+        const user: Omit<UserRegister, 'password'> = {
           firstName: values.firstName,
           lastName: values.lastName,
           email: values.email,
           birthday: values.birthday ? values.birthday : new Date(today),
-          password: values.password,
           profile: imageUrl,
           isAdmin: isAdminister,
         };
 
-        const verified = await verifyUserPassword(user.email, user.password);
-        if (verified) {
-          await updateUserByEmail(userUpdate!.email, user);
-          onClose();
-          const currentPath = location.pathname;
+        await updateUserByEmail(userUpdate!.email, user);
+        onClose();
 
-          if (currentPath.includes('/profile')) {
-            // Navigate to '/home'
-            navigate('/home');
-          } else if (currentPath.includes('/all-users')) {
-            // Reload the page
-            window.location.reload();
-          }
-        } else {
-          setPasswordError('Password is incorrect');
-        }
+        window.location.reload();
       } catch (error) {
         console.error('Error registering user:', error);
-        setPasswordError('Password is incorrect');
       }
     },
   });
@@ -230,32 +204,6 @@ const UpdateProfile = ({
           <Message
             severity="error"
             text={formik.errors.birthday}
-            className="mb-1 w-full justify-content-start text-pink-300"
-            style={{ backgroundColor: 'transparent' }}
-          />
-        ) : (
-          <div className="mt-5"></div>
-        )}
-        <PasswordInput
-          id="password"
-          name="password"
-          value={formik.values.password}
-          onChange={formik.handleChange}
-          iconClass="pi pi-lock text-500"
-          label="password"
-          disabled={false}
-        />
-        {formik.touched.password && formik.errors.password ? (
-          <Message
-            severity="error"
-            text={formik.errors.password}
-            className="mb-1 w-full justify-content-start text-pink-300"
-            style={{ backgroundColor: 'transparent' }}
-          />
-        ) : passwordError ? (
-          <Message
-            severity="error"
-            text={passwordError}
             className="mb-1 w-full justify-content-start text-pink-300"
             style={{ backgroundColor: 'transparent' }}
           />

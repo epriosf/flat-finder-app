@@ -79,7 +79,7 @@ const MainNavigation = ({ setVisible }: MainNavigationProps) => {
               <Ripple />
             </div>
           </li>
-          {user && user.role === 'admin' && (
+          {user && user.isAdmin === true && (
             <li>
               <div className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
                 <i className="pi pi-user mr-2"></i>
