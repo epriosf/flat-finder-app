@@ -79,7 +79,7 @@ const ProfileView = ({ user }: ProfileViewProps) => {
       >
         {user ? (
           <UpdateProfile
-            userUpdate={user}
+            userUpdate={{ ...user, password: '' }}
             isAdminister={user.isAdmin}
             onClose={handleDialogClose}
           />

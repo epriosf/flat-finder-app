@@ -8,7 +8,7 @@ import {
 import { InputSwitch, InputSwitchChangeEvent } from 'primereact/inputswitch';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { useRef, useState } from 'react';
-import { UserOutput } from '../../Interfaces/UserInterface';
+import { UserRegister } from '../../Interfaces/UserInterface';
 import { calculateAge } from '../../Users/UserList';
 
 interface FilterByProps<T> {
@@ -17,7 +17,7 @@ interface FilterByProps<T> {
   flatsCount?: Record<string, number>;
 }
 
-const FilterByUser = <T extends UserOutput>({
+const FilterByUser = <T extends UserRegister>({
   setItems,
   originalItems,
   flatsCount,
@@ -44,7 +44,7 @@ const FilterByUser = <T extends UserOutput>({
   };
   const handleButtonClick = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    let filteredUsers = originalItems.filter((item: UserOutput) => {
+    let filteredUsers = originalItems.filter((item: UserRegister) => {
       const age = calculateAge(new Date(item.birthday));
 
       const ageCondition =
