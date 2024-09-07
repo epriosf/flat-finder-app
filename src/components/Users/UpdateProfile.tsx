@@ -12,6 +12,7 @@ import * as Yup from 'yup';
 import { Image } from 'primereact/image';
 
 import { Nullable } from 'primereact/ts-helpers';
+import { useLocation, useNavigate } from 'react-router-dom';
 import GeneralInput from '../Commons/Inputs/GeneralInput';
 import PasswordInput from '../Commons/Inputs/PasswordInput';
 import { UserRegister } from '../Interfaces/UserInterface';
@@ -54,6 +55,8 @@ const UpdateProfile = ({
 }: UpdatePofileProps) => {
   const [profileFile, setProfileFile] = useState<File | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const formik = useFormik({
     initialValues: {
@@ -98,7 +101,15 @@ const UpdateProfile = ({
         if (verified) {
           await updateUserByEmail(userUpdate!.email, user);
           onClose();
-          window.location.reload();
+          const currentPath = location.pathname;
+
+          if (currentPath.includes('/profile')) {
+            // Navigate to '/home'
+            navigate('/home');
+          } else if (currentPath.includes('/all-users')) {
+            // Reload the page
+            window.location.reload();
+          }
         } else {
           setPasswordError('Password is incorrect');
         }

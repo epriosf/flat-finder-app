@@ -10,12 +10,16 @@ interface UserCardProps {
   age: number;
   birthday: string;
   flatsNumber: number;
+  onToggleAdmin: () => void; //
+  onDeleteUser: () => void;
 }
 const UserCard: React.FC<UserCardProps> = ({
   user,
   age,
   birthday,
   flatsNumber,
+  onToggleAdmin,
+  onDeleteUser,
 }) => {
   const [dialogVisible, setDialogVisible] = useState<boolean>(false);
 
@@ -25,6 +29,7 @@ const UserCard: React.FC<UserCardProps> = ({
   const handleEditClick = () => {
     setDialogVisible(true);
   };
+
   const header = (
     <div className="flex gap-3 align-items-center md:w-25rem mb-0">
       <Avatar
@@ -56,12 +61,14 @@ const UserCard: React.FC<UserCardProps> = ({
           label="Toggle Admin"
           icon="pi pi-user-edit"
           className="w-full md:w-6 bg-indigo-400"
+          onClick={onToggleAdmin}
         />
         <Button
           label="Remove User"
           severity="secondary"
           icon="pi pi-trash"
           className="w-full md:w-6 bg-indigo-200 text-indigo-800"
+          onClick={onDeleteUser}
         />
       </div>
     </>
